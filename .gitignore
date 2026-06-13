@@ -1,0 +1,25 @@
+# Xcode / generated
+ios/*.xcodeproj
+ios/*.xcworkspace
+**/xcuserdata/
+**/DerivedData/
+build/
+*.xcarchive
+*.ipa
+
+# Secrets / signing
+.secrets/
+*.p8
+*.mobileprovision
+.env
+.env.local
+
+# Web / node
+node_modules/
+.next/
+.vercel/
+out/
+dist/
+
+# macOS
+.DS_Store
