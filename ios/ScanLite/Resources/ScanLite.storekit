@@ -1,11 +1,11 @@
 {
-  "identifier" : "B8E9F2A1-0000-4000-A000-5CA171E00001",
+  "identifier" : "SCANLITESK1",
   "nonRenewingSubscriptions" : [],
   "products" : [
     {
       "displayPrice" : "4.99",
       "familyShareable" : false,
-      "internalID" : "1001",
+      "internalID" : "1000000001",
       "localizations" : [
         {
           "description" : "Unlock OCR searchable text, merge into one PDF, JPG and PNG export, password protection, and custom file naming. Removes all ads. One-time purchase, yours forever.",
@@ -18,17 +18,7 @@
       "type" : "NonConsumable"
     }
   ],
-  "settings" : {
-    "_applicationInternalID" : "0",
-    "_developerTeamID" : "R95M36AU2X",
-    "_failTransactionsEnabled" : false,
-    "_locale" : "en_US",
-    "_storefront" : "USA",
-    "_storeKitErrors" : []
-  },
+  "settings" : {},
   "subscriptionGroups" : [],
-  "version" : {
-    "major" : 4,
-    "minor" : 0
-  }
+  "version" : { "major" : 3, "minor" : 0 }
 }

@@ -31,6 +31,10 @@ targets:
     dependencies:
       - package: GoogleMobileAds
       - package: GoogleUserMessagingPlatform
+    scheme:
+      testTargets:
+        - ScanLiteTests
+      storeKitConfiguration: ScanLite/Resources/ScanLite.storekit
     info:
       path: ScanLite/Info.plist
       properties:
@@ -72,6 +76,8 @@ targets:
     platform: iOS
     sources:
       - path: ScanLiteTests
+      - path: ScanLite/Resources/ScanLite.storekit
+        buildPhase: resources
     dependencies:
       - target: ScanLite
     settings:
