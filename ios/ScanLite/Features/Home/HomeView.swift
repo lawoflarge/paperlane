@@ -4,12 +4,15 @@ import SwiftData
 /// Home screen: a giant Scan button (<=1 tap to capture) over a local-first library.
 struct HomeView: View {
     @Environment(\.modelContext) private var context
+    @Environment(IAPManager.self) private var iap
     @Query(sort: \ScannedDocument.createdAt, order: .reverse) private var documents: [ScannedDocument]
 
     @State private var showScanner = false
     @State private var selected: ScannedDocument?
     @State private var renaming: ScannedDocument?
     @State private var renameText = ""
+    @State private var showMerge = false
+    @State private var showPaywall = false
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -27,7 +30,7 @@ struct HomeView: View {
                         } else {
                             library
                         }
-                        Color.clear.frame(height: 110)   // room for the floating button
+                        Color.clear.frame(height: 110)
                     }
                     .padding(20)
                 }
@@ -44,6 +47,8 @@ struct HomeView: View {
             .sheet(item: $selected) { doc in
                 DocumentPreviewView(document: doc, files: files)
             }
+            .sheet(isPresented: $showMerge) { MergeView() }
+            .sheet(isPresented: $showPaywall) { PaywallView() }
             .alert("Rename document", isPresented: renameBinding) {
                 TextField("Name", text: $renameText)
                 Button("Save") { commitRename() }
@@ -53,13 +58,23 @@ struct HomeView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("ScanLite")
-                .font(.serif(34, .bold))
-                .foregroundStyle(PaperTheme.inkPrimary)
-            Text("\(documents.count) document\(documents.count == 1 ? "" : "s")")
-                .font(.system(size: 13).monospacedDigit())
-                .foregroundStyle(PaperTheme.inkSecondary)
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("ScanLite")
+                    .font(.serif(34, .bold))
+                    .foregroundStyle(PaperTheme.inkPrimary)
+                Text("\(documents.count) document\(documents.count == 1 ? "" : "s")")
+                    .font(.system(size: 13).monospacedDigit())
+                    .foregroundStyle(PaperTheme.inkSecondary)
+            }
+            Spacer()
+            if documents.count >= 2 {
+                Button { combine() } label: {
+                    Label("Combine", systemImage: "doc.on.doc")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
+            }
         }
     }
 
@@ -123,6 +138,10 @@ struct HomeView: View {
             pdfData: data,
             pageCount: images.count
         )
+    }
+
+    private func combine() {
+        if iap.isPro { showMerge = true } else { showPaywall = true }
     }
 
     private func delete(_ doc: ScannedDocument) {
