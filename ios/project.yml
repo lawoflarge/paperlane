@@ -11,7 +11,7 @@ settings:
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: R95M36AU2X
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    CURRENT_PROJECT_VERSION: "2"
     TARGETED_DEVICE_FAMILY: "1,2"
 
 targets:
@@ -48,6 +48,7 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_STYLE: Automatic
         SWIFT_EMIT_LOC_STRINGS: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
   ScanLiteTests:
     type: bundle.unit-test

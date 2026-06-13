@@ -13,7 +13,7 @@ struct PaywallView: View {
         ("doc.on.doc", "Combine pages into one PDF"),
         ("photo", "Export as JPG or PNG"),
         ("lock", "Password-protect your PDFs"),
-        ("nosign", "Remove all ads")
+        ("textformat", "Custom file naming")
     ]
 
     var body: some View {
