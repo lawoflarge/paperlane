@@ -4,12 +4,17 @@ import SwiftData
 @main
 struct ScanLiteApp: App {
     @State private var iap = IAPManager()
+    @State private var ads = AdConsentManager()
 
     var body: some Scene {
         WindowGroup {
             HomeView()
                 .environment(iap)
-                .task { await iap.start() }
+                .environment(ads)
+                .task {
+                    await iap.start()
+                    await ads.bootstrap()
+                }
         }
         .modelContainer(for: ScannedDocument.self)
     }
