@@ -14,23 +14,12 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     TARGETED_DEVICE_FAMILY: "1,2"
 
-packages:
-  GoogleMobileAds:
-    url: https://github.com/googleads/swift-package-manager-google-mobile-ads
-    from: "13.4.0"
-  GoogleUserMessagingPlatform:
-    url: https://github.com/googleads/swift-package-manager-google-user-messaging-platform
-    from: "3.1.0"
-
 targets:
   ScanLite:
     type: application
     platform: iOS
     sources:
       - path: ScanLite
-    dependencies:
-      - package: GoogleMobileAds
-      - package: GoogleUserMessagingPlatform
     scheme:
       testTargets:
         - ScanLiteTests
@@ -44,10 +33,7 @@ targets:
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
-        # Debug -> Google official sample app id; Release -> flagged placeholder until AdMob app exists
-        GADApplicationIdentifier: $(GAD_APP_ID)
         NSCameraUsageDescription: "ScanLite uses the camera to scan your documents into PDFs. Pages are processed on your device and never uploaded."
-        NSUserTrackingUsageDescription: "Allow tracking to see more relevant ads. ScanLite works fully either way, and your scans always stay private on your device."
         ITSAppUsesNonExemptEncryption: false
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -56,20 +42,12 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        # Minimal SKAdNetwork seed (Google primary); expand to AdMob's full list in Phase 3
-        SKAdNetworkItems:
-          - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.levinschwab.scanlite
         GENERATE_INFOPLIST_FILE: NO
         CODE_SIGN_STYLE: Automatic
         SWIFT_EMIT_LOC_STRINGS: YES
-      configs:
-        Debug:
-          GAD_APP_ID: "ca-app-pub-3940256099942544~1458002511"
-        Release:
-          GAD_APP_ID: "ca-app-pub-6563643868702361~PLACEHOLDER"
 
   ScanLiteTests:
     type: bundle.unit-test

@@ -5,7 +5,6 @@ import SwiftData
 struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Environment(IAPManager.self) private var iap
-    @Environment(AdConsentManager.self) private var ads
     @Query(sort: \ScannedDocument.createdAt, order: .reverse) private var documents: [ScannedDocument]
 
     @State private var showScanner = false
@@ -31,19 +30,14 @@ struct HomeView: View {
                         } else {
                             library
                         }
-                        Color.clear.frame(height: 150)
+                        Color.clear.frame(height: 110)
                     }
                     .padding(20)
                 }
 
-                VStack(spacing: 10) {
-                    InkScanButton(action: startScan)
-                    if BannerPolicy.shouldShow(isPro: iap.isPro, canRequestAds: ads.canRequestAds) {
-                        BannerContainer().frame(width: 320, height: 50)
-                    }
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 12)
+                InkScanButton(action: startScan)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
             }
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(isPresented: $showScanner) {
