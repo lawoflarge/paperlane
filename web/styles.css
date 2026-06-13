@@ -1,0 +1,89 @@
+:root {
+  --paper: #FAF6EF;
+  --card: #FFFDF8;
+  --edge: #EDE6D8;
+  --ink: #1A1714;
+  --ink-2: #5C554A;
+  --ink-3: #9A9082;
+  --accent: #B4472B;
+  --ledger: #3E6B4F;
+  --serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+header.nav { padding: 28px 0; }
+.brand { font-family: var(--serif); font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }
+
+.hero { text-align: center; padding: 56px 0 40px; }
+.hero h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(38px, 7vw, 64px); line-height: 1.05; letter-spacing: -0.02em; }
+.hero .accent { color: var(--accent); }
+.hero p.sub { font-size: clamp(17px, 2.4vw, 21px); color: var(--ink-2); max-width: 620px; margin: 20px auto 0; }
+.badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 26px; }
+.badge {
+  font-size: 13px; font-weight: 600; color: var(--ink-2);
+  background: var(--card); border: 1px solid var(--edge);
+  padding: 8px 14px; border-radius: 999px;
+}
+.cta {
+  display: inline-block; margin-top: 30px;
+  background: var(--ink); color: var(--paper);
+  font-weight: 600; font-size: 17px;
+  padding: 16px 30px; border-radius: 16px;
+  border: 1px solid var(--accent);
+}
+.cta:hover { text-decoration: none; opacity: 0.94; }
+
+.shot { display: flex; justify-content: center; margin: 18px 0 8px; }
+.shot .frame {
+  width: min(280px, 70vw); aspect-ratio: 9/19.5;
+  background: var(--card); border: 1px solid var(--edge); border-radius: 36px;
+  box-shadow: 0 30px 60px rgba(70,54,31,0.14);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); color: var(--ink-3); font-size: 15px; text-align: center; padding: 24px;
+}
+
+section { padding: 48px 0; }
+section h2 { font-family: var(--serif); font-size: clamp(26px, 4vw, 34px); font-weight: 600; text-align: center; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 34px; }
+.feature { background: var(--card); border: 1px solid var(--edge); border-radius: 16px; padding: 22px; }
+.feature h3 { font-family: var(--serif); font-size: 19px; font-weight: 600; margin-bottom: 6px; }
+.feature p { color: var(--ink-2); font-size: 15px; }
+.feature .dot { color: var(--accent); font-weight: 700; }
+
+.price { text-align: center; }
+.price .card {
+  background: var(--card); border: 1px solid var(--edge); border-radius: 20px;
+  max-width: 460px; margin: 30px auto 0; padding: 34px;
+}
+.price .amount { font-family: var(--serif); font-size: 46px; font-weight: 700; }
+.price .label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.price ul { list-style: none; text-align: left; max-width: 320px; margin: 22px auto 0; }
+.price li { padding: 8px 0; color: var(--ink); border-bottom: 1px solid var(--edge); }
+.price li::before { content: "✓"; color: var(--ledger); font-weight: 700; margin-right: 10px; }
+
+.faq { max-width: 680px; margin: 0 auto; }
+.faq details { background: var(--card); border: 1px solid var(--edge); border-radius: 14px; padding: 16px 20px; margin-top: 12px; }
+.faq summary { font-family: var(--serif); font-weight: 600; font-size: 17px; cursor: pointer; }
+.faq p { color: var(--ink-2); margin-top: 10px; }
+
+footer { padding: 40px 0 60px; text-align: center; color: var(--ink-3); font-size: 14px; border-top: 1px solid var(--edge); margin-top: 30px; }
+footer a { color: var(--ink-2); margin: 0 8px; }
+
+.legal { max-width: 760px; margin: 0 auto; padding: 40px 0 60px; }
+.legal h1 { font-family: var(--serif); font-size: 34px; font-weight: 700; margin-bottom: 6px; }
+.legal .updated { color: var(--ink-3); font-size: 14px; margin-bottom: 28px; }
+.legal h2 { font-family: var(--serif); font-size: 22px; font-weight: 600; margin: 28px 0 8px; }
+.legal p, .legal li { color: var(--ink-2); margin-bottom: 10px; }
+.legal ul { padding-left: 22px; }
