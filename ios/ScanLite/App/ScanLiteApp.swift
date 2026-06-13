@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct ScanLiteApp: App {
@@ -6,5 +7,6 @@ struct ScanLiteApp: App {
         WindowGroup {
             HomeView()
         }
+        .modelContainer(for: ScannedDocument.self)
     }
 }
