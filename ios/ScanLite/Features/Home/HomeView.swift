@@ -76,6 +76,7 @@ struct HomeView: View {
             }
             Spacer()
             HStack(spacing: 16) {
+                if !iap.isPro { proButton }
                 if !documents.isEmpty { sortMenu }
                 if documents.count >= 2 {
                     Button { combine() } label: {
@@ -86,6 +87,16 @@ struct HomeView: View {
                 }
             }
         }
+    }
+
+    /// Always-visible entry to the Pro upgrade (even with zero documents) so the
+    /// in-app purchase is easy to find. Hidden once Pro is unlocked.
+    private var proButton: some View {
+        Button { showPaywall = true } label: {
+            Label("Pro", systemImage: "crown.fill")
+                .font(.system(size: 14, weight: .semibold))
+        }
+        .tint(PaperTheme.accent)
     }
 
     private var sortMenu: some View {
@@ -200,6 +211,14 @@ struct HomeView: View {
                 .font(.system(size: 15))
                 .foregroundStyle(PaperTheme.inkSecondary)
                 .multilineTextAlignment(.center)
+            if !iap.isPro {
+                Button { showPaywall = true } label: {
+                    Label("Unlock ScanLite Pro", systemImage: "crown.fill")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(PaperTheme.accent)
+                }
+                .padding(.top, 10)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 80)

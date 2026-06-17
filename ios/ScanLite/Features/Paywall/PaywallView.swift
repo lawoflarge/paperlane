@@ -12,8 +12,7 @@ struct PaywallView: View {
         ("text.viewfinder", "Searchable OCR text layer"),
         ("doc.on.doc", "Combine pages into one PDF"),
         ("photo", "Export as JPG or PNG"),
-        ("lock", "Password-protect your PDFs"),
-        ("textformat", "Custom file naming")
+        ("lock", "Password-protect your PDFs")
     ]
 
     var body: some View {
