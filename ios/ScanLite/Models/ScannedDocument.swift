@@ -12,18 +12,23 @@ final class ScannedDocument {
     /// PDF file name within the documents directory (see `DocumentFileStore`).
     var fileName: String
     var fileSizeBytes: Int
+    /// User-starred documents pin to the top of the library. Defaulted so SwiftData
+    /// performs a lightweight migration for any pre-existing records.
+    var isFavorite: Bool = false
 
     init(
         title: String,
         createdAt: Date = .now,
         pageCount: Int,
         fileName: String,
-        fileSizeBytes: Int
+        fileSizeBytes: Int,
+        isFavorite: Bool = false
     ) {
         self.title = title
         self.createdAt = createdAt
         self.pageCount = pageCount
         self.fileName = fileName
         self.fileSizeBytes = fileSizeBytes
+        self.isFavorite = isFavorite
     }
 }

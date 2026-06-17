@@ -13,6 +13,8 @@ struct HomeView: View {
     @State private var renameText = ""
     @State private var showMerge = false
     @State private var showPaywall = false
+    @State private var sort: DocumentSort = .newest
+    @State private var searchText = ""
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -28,7 +30,12 @@ struct HomeView: View {
                         if documents.isEmpty {
                             emptyState
                         } else {
-                            library
+                            searchField
+                            if arranged.isEmpty {
+                                noMatchesState
+                            } else {
+                                library(arranged)
+                            }
                         }
                         Color.clear.frame(height: 110)
                     }
@@ -68,19 +75,83 @@ struct HomeView: View {
                     .foregroundStyle(PaperTheme.inkSecondary)
             }
             Spacer()
-            if documents.count >= 2 {
-                Button { combine() } label: {
-                    Label("Combine", systemImage: "doc.on.doc")
-                        .font(.system(size: 14, weight: .semibold))
+            HStack(spacing: 16) {
+                if !documents.isEmpty { sortMenu }
+                if documents.count >= 2 {
+                    Button { combine() } label: {
+                        Label("Combine", systemImage: "doc.on.doc")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    .tint(PaperTheme.accent)
                 }
-                .tint(PaperTheme.accent)
             }
         }
     }
 
-    private var library: some View {
+    private var sortMenu: some View {
+        Menu {
+            Picker("Sort", selection: $sort) {
+                ForEach(DocumentSort.allCases) { option in
+                    Label(option.label, systemImage: option.systemImage).tag(option)
+                }
+            }
+        } label: {
+            Label("Sort", systemImage: "arrow.up.arrow.down.circle")
+                .font(.system(size: 14, weight: .semibold))
+        }
+        .tint(PaperTheme.accent)
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(PaperTheme.inkTertiary)
+            TextField("Search documents", text: $searchText)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .foregroundStyle(PaperTheme.inkPrimary)
+            if !searchText.isEmpty {
+                Button { searchText = "" } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(PaperTheme.inkTertiary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .font(.system(size: 15))
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(PaperTheme.card, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(PaperTheme.cardEdge, lineWidth: 0.5)
+        )
+    }
+
+    private var noMatchesState: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "doc.text.magnifyingglass")
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(PaperTheme.inkTertiary)
+            Text("No matches")
+                .font(.serif(20, .semibold))
+                .foregroundStyle(PaperTheme.inkPrimary)
+            Text("No documents match “\(searchText)”.")
+                .font(.system(size: 14))
+                .foregroundStyle(PaperTheme.inkSecondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 60)
+    }
+
+    private var arranged: [ScannedDocument] {
+        LibraryArranging.arrange(documents, sort: sort, query: searchText)
+    }
+
+    private func library(_ docs: [ScannedDocument]) -> some View {
         LazyVGrid(columns: columns, spacing: 16) {
-            ForEach(documents) { doc in
+            ForEach(docs) { doc in
                 Button { selected = doc } label: {
                     PaperCardTile(
                         title: doc.title,
@@ -89,10 +160,28 @@ struct HomeView: View {
                         fileSizeBytes: doc.fileSizeBytes,
                         pdfURL: files.fileURL(doc.fileName)
                     )
+                    .overlay(alignment: .topLeading) {
+                        if doc.isFavorite {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(PaperTheme.accent)
+                                .padding(6)
+                                .background(.ultraThinMaterial, in: Circle())
+                                .padding(8)
+                        }
+                    }
+                    .id("\(doc.fileName)#\(doc.fileSizeBytes)")
                 }
                 .buttonStyle(.plain)
                 .contextMenu {
                     Button { startRename(doc) } label: { Label("Rename", systemImage: "pencil") }
+                    Button { toggleFavorite(doc) } label: {
+                        Label(doc.isFavorite ? "Unfavorite" : "Favorite",
+                              systemImage: doc.isFavorite ? "star.slash" : "star")
+                    }
+                    Button { duplicate(doc) } label: { Label("Duplicate", systemImage: "plus.square.on.square") }
+                    Button { rotate(doc) } label: { Label("Rotate 90°", systemImage: "rotate.right") }
+                    Divider()
                     Button(role: .destructive) { delete(doc) } label: { Label("Delete", systemImage: "trash") }
                 }
             }
@@ -157,5 +246,17 @@ struct HomeView: View {
         guard let doc = renaming else { return }
         try? DocumentStore(context: context).rename(doc, to: renameText)
         renaming = nil
+    }
+
+    private func toggleFavorite(_ doc: ScannedDocument) {
+        try? DocumentStore(context: context).setFavorite(doc, !doc.isFavorite)
+    }
+
+    private func duplicate(_ doc: ScannedDocument) {
+        try? DocumentStore(context: context).duplicate(doc)
+    }
+
+    private func rotate(_ doc: ScannedDocument) {
+        try? DocumentStore(context: context).rotate(doc)
     }
 }

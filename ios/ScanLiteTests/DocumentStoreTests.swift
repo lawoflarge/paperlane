@@ -1,6 +1,7 @@
 import Testing
 import SwiftData
 import Foundation
+import PDFKit
 @testable import ScanLite
 
 @MainActor
@@ -52,6 +53,43 @@ struct DocumentStoreTests {
             #expect(throws: (any Error).self) {
                 try store.files.read(fileName: fileName)
             }
+        }
+    }
+
+    @Test func setFavoritePersistsFlag() throws {
+        let (store, container) = try makeStore()
+        try withExtendedLifetime(container) {
+            let data = PDFAssembler().assemble(images: [ImageFixtures.page("1")])
+            let doc = try store.save(title: "Doc", pdfData: data, pageCount: 1)
+            #expect(doc.isFavorite == false)
+            try store.setFavorite(doc, true)
+            #expect(try store.all().first?.isFavorite == true)
+        }
+    }
+
+    @Test func duplicateCreatesIndependentCopy() throws {
+        let (store, container) = try makeStore()
+        try withExtendedLifetime(container) {
+            let data = PDFAssembler().assemble(images: [ImageFixtures.page("1"), ImageFixtures.page("2")])
+            let original = try store.save(title: "Report", pdfData: data, pageCount: 2)
+            let copy = try store.duplicate(original)
+            #expect(try store.all().count == 2)
+            #expect(copy.fileName != original.fileName)
+            #expect(copy.pageCount == original.pageCount)
+            #expect(try store.files.read(fileName: copy.fileName).count == data.count)
+        }
+    }
+
+    @Test func rotateChangesStoredPageOrientation() throws {
+        let (store, container) = try makeStore()
+        try withExtendedLifetime(container) {
+            let data = PDFAssembler().assemble(images: [ImageFixtures.page("1")])
+            let doc = try store.save(title: "Rot", pdfData: data, pageCount: 1)
+            let before = PDFDocument(data: try store.files.read(fileName: doc.fileName))!.page(at: 0)!.rotation
+            try store.rotate(doc)
+            let after = PDFDocument(data: try store.files.read(fileName: doc.fileName))!.page(at: 0)!.rotation
+            #expect(after == (before + 90) % 360)
+            #expect(doc.pageCount == 1)
         }
     }
 }

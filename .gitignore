@@ -23,3 +23,7 @@ dist/
 
 # macOS
 .DS_Store
+
+# asc canonical metadata working copy (source of truth lives on App Store Connect)
+metadata/
+metadata_verify/

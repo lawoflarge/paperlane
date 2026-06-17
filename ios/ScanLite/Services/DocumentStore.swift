@@ -48,6 +48,38 @@ struct DocumentStore {
         try context.save()
     }
 
+    /// Star / unstar a document (free). Favourites pin to the top of the library.
+    func setFavorite(_ doc: ScannedDocument, _ isFavorite: Bool) throws {
+        doc.isFavorite = isFavorite
+        try context.save()
+    }
+
+    /// Duplicate a document (free): copy its PDF bytes to a new file + insert a record.
+    @discardableResult
+    func duplicate(_ doc: ScannedDocument) throws -> ScannedDocument {
+        let data = try files.read(fileName: doc.fileName)
+        let fileName = "\(UUID().uuidString).pdf"
+        try files.write(data, fileName: fileName)
+        let copy = ScannedDocument(
+            title: "Copy of \(doc.title)",
+            pageCount: doc.pageCount,
+            fileName: fileName,
+            fileSizeBytes: data.count
+        )
+        context.insert(copy)
+        try context.save()
+        return copy
+    }
+
+    /// Rotate every page of a document 90° clockwise, in place (free).
+    func rotate(_ doc: ScannedDocument) throws {
+        let data = try files.read(fileName: doc.fileName)
+        guard let rotated = PDFRotator().rotated(data, clockwiseQuarterTurns: 1) else { return }
+        try files.write(rotated, fileName: doc.fileName)
+        doc.fileSizeBytes = rotated.count
+        try context.save()
+    }
+
     func delete(_ doc: ScannedDocument) throws {
         try? files.delete(fileName: doc.fileName)
         context.delete(doc)

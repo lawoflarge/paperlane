@@ -1,12 +1,14 @@
 import SwiftUI
+import SwiftData
 import PDFKit
 
-/// Full PDF preview with share + Pro actions (OCR, image export, password).
+/// Full PDF preview with share + free rotate + Pro actions (OCR, image export, password).
 /// Every Pro entry point routes a non-Pro user to the paywall — never a no-op.
 struct DocumentPreviewView: View {
     let document: ScannedDocument
     let files: DocumentFileStore
     @Environment(IAPManager.self) private var iap
+    @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
     @State private var showShare = false
@@ -39,6 +41,9 @@ struct DocumentPreviewView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showShare = true } label: { Image(systemName: "square.and.arrow.up") }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { rotate() } label: { Image(systemName: "rotate.right") }
+                }
                 ToolbarItem(placement: .topBarTrailing) { proMenu }
             }
             .tint(PaperTheme.accent)
@@ -68,6 +73,14 @@ struct DocumentPreviewView: View {
 
     private func gated(_ action: () -> Void) {
         if iap.isPro { action() } else { showPaywall = true }
+    }
+
+    // MARK: - Free actions
+
+    /// Rotate every page 90° clockwise, persist it, and refresh the preview. Free.
+    private func rotate() {
+        try? DocumentStore(context: context).rotate(document)
+        reloadToken = UUID()
     }
 
     private func makeSearchable() {
