@@ -100,16 +100,14 @@ struct HomeView: View {
             Spacer()
             HStack(spacing: 16) {
                 PhotosPicker(selection: $photoItem, matching: .images) {
-                    Label("Import", systemImage: "photo.badge.plus")
-                        .font(.system(size: 14, weight: .semibold))
+                    Image(systemName: "photo.badge.plus").font(.system(size: 16, weight: .semibold))
                 }
                 .tint(PaperTheme.accent)
                 if !iap.isPro { proButton }
                 if !documents.isEmpty { sortMenu }
                 if documents.count >= 2 {
                     Button { combine() } label: {
-                        Label("Combine", systemImage: "doc.on.doc")
-                            .font(.system(size: 14, weight: .semibold))
+                        Image(systemName: "doc.on.doc").font(.system(size: 16, weight: .semibold))
                     }
                     .tint(PaperTheme.accent)
                 }
@@ -143,8 +141,7 @@ struct HomeView: View {
                 }
             }
         } label: {
-            Label("Sort", systemImage: "arrow.up.arrow.down.circle")
-                .font(.system(size: 14, weight: .semibold))
+            Image(systemName: "arrow.up.arrow.down.circle").font(.system(size: 16, weight: .semibold))
         }
         .tint(PaperTheme.accent)
     }
