@@ -111,6 +111,29 @@ struct DocumentStore {
         try context.save()
     }
 
+    /// Assign (or clear) a document's folder (free organisation).
+    func setFolder(_ doc: ScannedDocument, folderID: UUID?) throws {
+        doc.folderID = folderID
+        try context.save()
+    }
+
+    @discardableResult
+    func createFolder(name: String) throws -> Folder {
+        let folder = Folder(name: name)
+        context.insert(folder)
+        try context.save()
+        return folder
+    }
+
+    /// Delete a folder and un-file any documents that referenced it.
+    func deleteFolder(_ folder: Folder) throws {
+        let fid = folder.uuid
+        let all = (try? context.fetch(FetchDescriptor<ScannedDocument>())) ?? []
+        for doc in all where doc.folderID == fid { doc.folderID = nil }
+        context.delete(folder)
+        try context.save()
+    }
+
     func delete(_ doc: ScannedDocument) throws {
         try? files.delete(fileName: doc.fileName)
         context.delete(doc)

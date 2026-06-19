@@ -7,6 +7,7 @@ struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Environment(IAPManager.self) private var iap
     @Query(sort: \ScannedDocument.createdAt, order: .reverse) private var documents: [ScannedDocument]
+    @Query(sort: \Folder.createdAt) private var folders: [Folder]
 
     @State private var showScanner = false
     @State private var selected: ScannedDocument?
@@ -20,6 +21,9 @@ struct HomeView: View {
     @State private var photoItem: PhotosPickerItem?
     @AppStorage("didSeeWelcomeV2") private var didSeeWelcome = false
     @State private var showWelcome = false
+    @State private var selectedFolderID: UUID?
+    @State private var creatingFolder = false
+    @State private var newFolderName = ""
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -36,6 +40,7 @@ struct HomeView: View {
                             emptyState
                         } else {
                             searchField
+                            folderBar
                             if arranged.isEmpty {
                                 noMatchesState
                             } else {
@@ -69,6 +74,11 @@ struct HomeView: View {
                 TextField("Name", text: $renameText)
                 Button("Save") { commitRename() }
                 Button("Cancel", role: .cancel) { renaming = nil }
+            }
+            .alert("New folder", isPresented: $creatingFolder) {
+                TextField("Folder name", text: $newFolderName)
+                Button("Create") { commitNewFolder() }
+                Button("Cancel", role: .cancel) { newFolderName = "" }
             }
         }
     }
@@ -171,7 +181,7 @@ struct HomeView: View {
     }
 
     private var arranged: [ScannedDocument] {
-        LibraryArranging.arrange(documents, sort: sort, query: searchText)
+        LibraryArranging.arrange(documents, sort: sort, query: searchText, folderID: selectedFolderID)
     }
 
     private func library(_ docs: [ScannedDocument]) -> some View {
@@ -206,6 +216,12 @@ struct HomeView: View {
                     }
                     Button { duplicate(doc) } label: { Label("Duplicate", systemImage: "plus.square.on.square") }
                     Button { rotate(doc) } label: { Label("Rotate 90°", systemImage: "rotate.right") }
+                    Menu {
+                        Button { setFolder(doc, nil) } label: { Label("None", systemImage: "tray") }
+                        ForEach(folders) { folder in
+                            Button { setFolder(doc, folder.uuid) } label: { Label(folder.name, systemImage: "folder") }
+                        }
+                    } label: { Label("Move to…", systemImage: "folder") }
                     Divider()
                     Button(role: .destructive) { delete(doc) } label: { Label("Delete", systemImage: "trash") }
                 }
@@ -298,6 +314,48 @@ struct HomeView: View {
 
     private func rotate(_ doc: ScannedDocument) {
         try? DocumentStore(context: context).rotate(doc)
+    }
+
+    private func setFolder(_ doc: ScannedDocument, _ id: UUID?) {
+        try? DocumentStore(context: context).setFolder(doc, folderID: id)
+    }
+
+    private func commitNewFolder() {
+        let name = newFolderName.trimmingCharacters(in: .whitespaces)
+        newFolderName = ""
+        guard !name.isEmpty else { return }
+        _ = try? DocumentStore(context: context).createFolder(name: name)
+    }
+
+    private var folderBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                folderChip(title: "All", id: nil)
+                ForEach(folders) { folder in folderChip(title: folder.name, id: folder.uuid) }
+                Button { creatingFolder = true } label: {
+                    Label("New", systemImage: "folder.badge.plus")
+                        .font(.system(size: 13, weight: .semibold))
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                        .background(PaperTheme.card, in: Capsule())
+                        .overlay(Capsule().strokeBorder(PaperTheme.cardEdge, lineWidth: 0.5))
+                        .foregroundStyle(PaperTheme.accent)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func folderChip(title: String, id: UUID?) -> some View {
+        let selected = selectedFolderID == id
+        return Button { selectedFolderID = id } label: {
+            Text(title)
+                .font(.system(size: 13, weight: .semibold))
+                .padding(.horizontal, 14).padding(.vertical, 7)
+                .background(selected ? PaperTheme.accent : PaperTheme.card, in: Capsule())
+                .foregroundStyle(selected ? PaperTheme.scanButtonGlyph : PaperTheme.inkSecondary)
+                .overlay(Capsule().strokeBorder(selected ? Color.clear : PaperTheme.cardEdge, lineWidth: 0.5))
+        }
+        .buttonStyle(.plain)
     }
 }
 

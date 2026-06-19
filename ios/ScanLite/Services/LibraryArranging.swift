@@ -33,11 +33,12 @@ enum DocumentSort: String, CaseIterable, Identifiable {
 enum LibraryArranging {
     /// Filter `documents` by a case/diacritic-insensitive title query (empty query
     /// keeps all), then order by `sort` with favourites pinned ahead of the rest.
-    static func arrange(_ documents: [ScannedDocument], sort: DocumentSort, query: String) -> [ScannedDocument] {
+    static func arrange(_ documents: [ScannedDocument], sort: DocumentSort, query: String, folderID: UUID? = nil) -> [ScannedDocument] {
+        let scoped = folderID == nil ? documents : documents.filter { $0.folderID == folderID }
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = trimmed.isEmpty
-            ? documents
-            : documents.filter {
+            ? scoped
+            : scoped.filter {
                 $0.title.localizedStandardContains(trimmed)
                     || $0.ocrText.localizedStandardContains(trimmed)
             }

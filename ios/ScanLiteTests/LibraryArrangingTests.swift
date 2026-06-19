@@ -25,6 +25,14 @@ struct LibraryArrangingTests {
         #expect(result.map(\.title) == ["Untitled A"])
     }
 
+    @Test func folderIDScopesResults() {
+        let folder = UUID()
+        let a = doc("A"); a.folderID = folder
+        let b = doc("B")   // unfiled
+        let result = LibraryArranging.arrange([a, b], sort: .nameAZ, query: "", folderID: folder)
+        #expect(result.map(\.title) == ["A"])
+    }
+
     @Test func newestFirstOrdersByCreatedAtDescending() {
         let docs = [doc("A", daysAgo: 2), doc("B", daysAgo: 0), doc("C", daysAgo: 1)]
         let result = LibraryArranging.arrange(docs, sort: .newest, query: "")
