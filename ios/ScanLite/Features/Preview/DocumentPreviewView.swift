@@ -87,6 +87,7 @@ struct DocumentPreviewView: View {
                 Button { gated { exportText(.txt) } } label: { Label("Export .txt", systemImage: "doc.text") }
                 Button { gated { exportText(.docx) } } label: { Label("Export .docx (Word)", systemImage: "doc.richtext") }
             } label: { Label("Export text", systemImage: "text.viewfinder") }
+            Button { gated { smartRename() } } label: { Label("Smart rename", systemImage: "sparkles") }
             Button { gated { export(.jpeg) } } label: { Label("Export as JPG", systemImage: "photo") }
             Button { gated { export(.png) } } label: { Label("Export as PNG", systemImage: "photo.on.rectangle") }
             Menu {
@@ -184,6 +185,15 @@ struct DocumentPreviewView: View {
         }
         contactToSave = contact
         showContact = true
+    }
+
+    private func smartRename() {
+        working = true
+        Task {
+            let name = await SmartNamer.suggest(ocrText: document.ocrText)
+            try? DocumentStore(context: context).rename(document, to: name)
+            working = false
+        }
     }
 
     private func runEncrypt() {
