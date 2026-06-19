@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 /// Home screen: a giant Scan button (<=1 tap to capture) over a local-first library.
 struct HomeView: View {
@@ -15,6 +16,8 @@ struct HomeView: View {
     @State private var showPaywall = false
     @State private var sort: DocumentSort = .newest
     @State private var searchText = ""
+    @State private var batch: CapturedBatch?
+    @State private var photoItem: PhotosPickerItem?
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -56,6 +59,8 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showMerge) { MergeView() }
             .sheet(isPresented: $showPaywall) { PaywallView() }
+            .sheet(item: $batch) { captured in ReviewScanView(images: captured.images) }
+            .onChange(of: photoItem) { _, item in loadPhoto(item) }
             .alert("Rename document", isPresented: renameBinding) {
                 TextField("Name", text: $renameText)
                 Button("Save") { commitRename() }
@@ -76,6 +81,11 @@ struct HomeView: View {
             }
             Spacer()
             HStack(spacing: 16) {
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    Label("Import", systemImage: "photo.badge.plus")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
                 if !iap.isPro { proButton }
                 if !documents.isEmpty { sortMenu }
                 if documents.count >= 2 {
@@ -240,11 +250,19 @@ struct HomeView: View {
 
     private func handleScan(_ images: [UIImage]) {
         guard !images.isEmpty else { return }
-        // Every scan is OCR'd on-device at save → searchable PDF + indexed text (free).
-        _ = try? DocumentStore(context: context).saveScan(
-            title: Samples.autoName(),
-            images: images
-        )
+        // Review & enhance before saving; the save then OCRs (free searchable layer).
+        batch = CapturedBatch(images: images)
+    }
+
+    private func loadPhoto(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        Task {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                batch = CapturedBatch(images: [image])
+            }
+            photoItem = nil
+        }
     }
 
     private func combine() {
@@ -277,4 +295,11 @@ struct HomeView: View {
     private func rotate(_ doc: ScannedDocument) {
         try? DocumentStore(context: context).rotate(doc)
     }
+}
+
+/// A freshly captured or imported batch awaiting review. Identifiable so it can
+/// drive a `.sheet(item:)` presentation.
+struct CapturedBatch: Identifiable {
+    let id = UUID()
+    let images: [UIImage]
 }
