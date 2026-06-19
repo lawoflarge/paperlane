@@ -5,14 +5,17 @@ import SwiftData
 /// live preview, then save. On save the pages are OCR'd once (free searchable layer
 /// + indexed text) and auto-named from the first recognized line. Free.
 struct ReviewScanView: View {
-    let images: [UIImage]
+    @State private var pages: [UIImage]
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var mode: ImageEnhancer.Mode = .original
     @State private var saving = false
+    @State private var showCrop = false
     private let enhancer = ImageEnhancer()
 
-    private var preview: UIImage { enhancer.apply(mode, to: images.first ?? UIImage()) }
+    init(images: [UIImage]) { _pages = State(initialValue: images) }
+
+    private var preview: UIImage { enhancer.apply(mode, to: pages.first ?? UIImage()) }
 
     var body: some View {
         NavigationStack {
@@ -28,7 +31,7 @@ struct ReviewScanView: View {
 
                 filterStrip
 
-                Text("\(images.count) page\(images.count == 1 ? "" : "s")")
+                Text("\(pages.count) page\(pages.count == 1 ? "" : "s")")
                     .font(.system(size: 13).monospacedDigit())
                     .foregroundStyle(PaperTheme.inkSecondary)
                     .padding(.bottom, 8)
@@ -42,6 +45,17 @@ struct ReviewScanView: View {
                 ToolbarItem(placement: .topBarLeading) { Button("Cancel") { dismiss() }.disabled(saving) }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") { save() }.fontWeight(.semibold).disabled(saving)
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    Button { showCrop = true } label: { Label("Crop", systemImage: "crop") }
+                        .disabled(saving || pages.isEmpty)
+                }
+            }
+            .sheet(isPresented: $showCrop) {
+                if let first = pages.first {
+                    CropEditorView(image: first) { cropped in
+                        if !pages.isEmpty { pages[0] = cropped }
+                    }
                 }
             }
             .overlay {
@@ -81,7 +95,7 @@ struct ReviewScanView: View {
     private func save() {
         saving = true
         let mode = self.mode
-        let images = self.images
+        let images = self.pages
         Task {
             await Task.yield()
             let enhanced = images.map { enhancer.apply(mode, to: $0) }
