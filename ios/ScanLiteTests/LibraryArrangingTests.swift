@@ -4,15 +4,33 @@ import Foundation
 
 struct LibraryArrangingTests {
 
-    private func doc(_ title: String, daysAgo: Int = 0, size: Int = 1000, favorite: Bool = false) -> ScannedDocument {
+    private func doc(_ title: String, daysAgo: Int = 0, size: Int = 1000, favorite: Bool = false, ocrText: String = "") -> ScannedDocument {
         ScannedDocument(
             title: title,
             createdAt: Date(timeIntervalSince1970: 1_000_000 - Double(daysAgo) * 86_400),
             pageCount: 1,
             fileName: "\(title).pdf",
             fileSizeBytes: size,
-            isFavorite: favorite
+            isFavorite: favorite,
+            ocrText: ocrText
         )
+    }
+
+    @Test func queryMatchesOcrTextNotJustTitle() {
+        let docs = [
+            doc("Untitled A", ocrText: "Quarterly revenue report"),
+            doc("Untitled B", ocrText: "Grocery shopping list")
+        ]
+        let result = LibraryArranging.arrange(docs, sort: .newest, query: "revenue")
+        #expect(result.map(\.title) == ["Untitled A"])
+    }
+
+    @Test func folderIDScopesResults() {
+        let folder = UUID()
+        let a = doc("A"); a.folderID = folder
+        let b = doc("B")   // unfiled
+        let result = LibraryArranging.arrange([a, b], sort: .nameAZ, query: "", folderID: folder)
+        #expect(result.map(\.title) == ["A"])
     }
 
     @Test func newestFirstOrdersByCreatedAtDescending() {

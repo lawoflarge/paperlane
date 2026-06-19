@@ -7,21 +7,41 @@ import UIKit
 /// On-device Vision only — scanned content never leaves the phone.
 struct OCRService {
 
-    /// Assemble images into a PDF whose text is selectable/searchable.
-    func makeSearchablePDF(images: [UIImage]) -> Data {
+    /// A searchable PDF plus the plain recognized text, produced in a single OCR
+    /// pass (the text feeds free in-document search + Pro text export).
+    struct SearchablePDF {
+        let data: Data
+        let text: String
+    }
+
+    /// OCR every page once: draw the invisible selectable layer AND collect the
+    /// recognized text. One Vision pass per page (no double work).
+    func makeSearchable(images: [UIImage]) -> SearchablePDF {
         precondition(!images.isEmpty, "Cannot OCR zero pages")
         let firstBounds = CGRect(origin: .zero, size: images[0].size)
         let renderer = UIGraphicsPDFRenderer(bounds: firstBounds)
-        return renderer.pdfData { ctx in
+        var collected: [String] = []
+        let data = renderer.pdfData { ctx in
             for image in images {
                 let pageRect = CGRect(origin: .zero, size: image.size)
                 ctx.beginPage(withBounds: pageRect, pageInfo: [:])
                 image.draw(in: pageRect)
                 if let cg = image.cgImage {
-                    drawTextLayer(recognize(cg), pageSize: image.size)
+                    let observations = recognize(cg)
+                    drawTextLayer(observations, pageSize: image.size)
+                    let pageText = observations
+                        .compactMap { $0.topCandidates(1).first?.string }
+                        .joined(separator: "\n")
+                    if !pageText.isEmpty { collected.append(pageText) }
                 }
             }
         }
+        return SearchablePDF(data: data, text: collected.joined(separator: "\n"))
+    }
+
+    /// Assemble images into a PDF whose text is selectable/searchable.
+    func makeSearchablePDF(images: [UIImage]) -> Data {
+        makeSearchable(images: images).data
     }
 
     /// Plain recognized text for a single image (used for copy / search index).

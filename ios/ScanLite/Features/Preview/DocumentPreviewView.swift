@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import PDFKit
+import Contacts
 
 /// Full PDF preview with share + free rotate + Pro actions (OCR, image export, password).
 /// Every Pro entry point routes a non-Pro user to the paywall — never a no-op.
@@ -18,6 +19,11 @@ struct DocumentPreviewView: View {
     @State private var shareItem: ShareItem?
     @State private var askPassword = false
     @State private var password = ""
+    @State private var showPages = false
+    @State private var showMarkup = false
+    @State private var markupImage: UIImage?
+    @State private var showContact = false
+    @State private var contactToSave: CNContact?
 
     private var url: URL { files.fileURL(document.fileName) }
 
@@ -44,9 +50,25 @@ struct DocumentPreviewView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { rotate() } label: { Image(systemName: "rotate.right") }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showPages = true } label: { Image(systemName: "square.stack") }
+                }
                 ToolbarItem(placement: .topBarTrailing) { proMenu }
             }
             .tint(PaperTheme.accent)
+            .sheet(isPresented: $showPages, onDismiss: { reloadToken = UUID() }) {
+                PageManagerView(document: document, files: files)
+            }
+            .sheet(isPresented: $showMarkup) {
+                if let image = markupImage {
+                    MarkupView(pageImage: image) { flattened in applyMarkup(flattened) }
+                }
+            }
+            .sheet(isPresented: $showContact) {
+                if let contact = contactToSave {
+                    ContactCardView(contact: contact) { showContact = false }.ignoresSafeArea()
+                }
+            }
             .sheet(isPresented: $showShare) { ShareSheet(items: [url]) }
             .sheet(item: $shareItem) { item in ShareSheet(items: [item.url]) }
             .sheet(isPresented: $showPaywall) { PaywallView() }
@@ -60,14 +82,28 @@ struct DocumentPreviewView: View {
 
     private var proMenu: some View {
         Menu {
-            Button { gated { makeSearchable() } } label: { Label("Make Searchable (OCR)", systemImage: "text.viewfinder") }
+            Menu {
+                Button { gated { copyText() } } label: { Label("Copy text", systemImage: "doc.on.clipboard") }
+                Button { gated { exportText(.txt) } } label: { Label("Export .txt", systemImage: "doc.text") }
+                Button { gated { exportText(.docx) } } label: { Label("Export .docx (Word)", systemImage: "doc.richtext") }
+            } label: { Label("Export text", systemImage: "text.viewfinder") }
+            Button { gated { smartRename() } } label: { Label("Smart rename", systemImage: "sparkles") }
             Button { gated { export(.jpeg) } } label: { Label("Export as JPG", systemImage: "photo") }
             Button { gated { export(.png) } } label: { Label("Export as PNG", systemImage: "photo.on.rectangle") }
+            Menu {
+                ForEach(PDFCompressor.Quality.allCases) { quality in
+                    Button { gated { compress(quality) } } label: { Text(quality.label) }
+                }
+            } label: { Label("Compress PDF", systemImage: "arrow.down.right.and.arrow.up.left") }
+            Button { gated { startMarkup() } } label: { Label("Markup & sign", systemImage: "signature") }
+            Button { gated { startContact() } } label: { Label("Save as contact", systemImage: "person.crop.circle.badge.plus") }
             Button { gated { askPassword = true } } label: { Label("Password Protect", systemImage: "lock") }
         } label: {
             Image(systemName: "wand.and.stars")
         }
     }
+
+    private enum TextFormat { case txt, docx }
 
     // MARK: - Pro gate
 
@@ -83,22 +119,81 @@ struct DocumentPreviewView: View {
         reloadToken = UUID()
     }
 
-    private func makeSearchable() {
-        working = true
-        Task {
-            await Task.yield()
-            _ = ProDocumentActions(files: files).makeSearchable(document)
-            reloadToken = UUID()
-            working = false
-        }
-    }
-
     private func export(_ format: ImageExporter.Format) {
         guard let data = ProDocumentActions(files: files).exportImage(document, format: format) else { return }
         let ext = format == .jpeg ? "jpg" : "png"
         let out = URL.temporaryDirectory.appending(path: "\(document.title).\(ext)")
         try? data.write(to: out)
         shareItem = ShareItem(url: out)
+    }
+
+    private func copyText() {
+        UIPasteboard.general.string = document.ocrText
+    }
+
+    private func exportText(_ format: TextFormat) {
+        let exporter = TextDocumentExporter()
+        let text = document.ocrText
+        let (data, ext): (Data, String) = format == .txt
+            ? (exporter.txtData(text), "txt")
+            : (exporter.docxData(text), "docx")
+        let out = URL.temporaryDirectory.appending(path: "\(document.title).\(ext)")
+        try? data.write(to: out)
+        shareItem = ShareItem(url: out)
+    }
+
+    private func compress(_ quality: PDFCompressor.Quality) {
+        guard let data = try? files.read(fileName: document.fileName),
+              let compressed = PDFCompressor().compress(data, quality: quality) else { return }
+        let out = URL.temporaryDirectory.appending(path: "\(document.title) (compressed).pdf")
+        try? compressed.write(to: out)
+        shareItem = ShareItem(url: out)
+    }
+
+    private func startMarkup() {
+        guard let data = try? files.read(fileName: document.fileName),
+              let pdf = PDFDocument(data: data), let page = pdf.page(at: 0) else { return }
+        let bounds = page.bounds(for: .mediaBox)
+        markupImage = page.thumbnail(of: bounds.size, for: .mediaBox)
+        showMarkup = true
+    }
+
+    private func applyMarkup(_ flattened: UIImage) {
+        guard let data = try? files.read(fileName: document.fileName),
+              let pdf = PDFDocument(data: data), let newPage = PDFPage(image: flattened) else { return }
+        pdf.removePage(at: 0)
+        pdf.insert(newPage, at: 0)
+        guard let out = pdf.dataRepresentation() else { return }
+        try? DocumentStore(context: context).replace(document, withData: out, pageCount: pdf.pageCount)
+        reloadToken = UUID()
+    }
+
+    private func startContact() {
+        let parsed = BusinessCardParser.parse(ocrText: document.ocrText)
+        let contact = CNMutableContact()
+        if let name = parsed.fullName {
+            let parts = name.split(separator: " ").map(String.init)
+            contact.givenName = parts.first ?? name
+            if parts.count > 1 { contact.familyName = parts.dropFirst().joined(separator: " ") }
+        }
+        if let org = parsed.organization { contact.organizationName = org }
+        if let email = parsed.email {
+            contact.emailAddresses = [CNLabeledValue(label: CNLabelWork, value: email as NSString)]
+        }
+        if let phone = parsed.phone {
+            contact.phoneNumbers = [CNLabeledValue(label: CNLabelPhoneNumberMain, value: CNPhoneNumber(stringValue: phone))]
+        }
+        contactToSave = contact
+        showContact = true
+    }
+
+    private func smartRename() {
+        working = true
+        Task {
+            let name = await SmartNamer.suggest(ocrText: document.ocrText)
+            try? DocumentStore(context: context).rename(document, to: name)
+            working = false
+        }
     }
 
     private func runEncrypt() {

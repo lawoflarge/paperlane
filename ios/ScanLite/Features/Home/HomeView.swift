@@ -1,11 +1,13 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 /// Home screen: a giant Scan button (<=1 tap to capture) over a local-first library.
 struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Environment(IAPManager.self) private var iap
     @Query(sort: \ScannedDocument.createdAt, order: .reverse) private var documents: [ScannedDocument]
+    @Query(sort: \Folder.createdAt) private var folders: [Folder]
 
     @State private var showScanner = false
     @State private var selected: ScannedDocument?
@@ -15,6 +17,16 @@ struct HomeView: View {
     @State private var showPaywall = false
     @State private var sort: DocumentSort = .newest
     @State private var searchText = ""
+    @State private var batch: CapturedBatch?
+    @State private var photoItem: PhotosPickerItem?
+    @AppStorage("didSeeWelcomeV2") private var didSeeWelcome = false
+    @State private var showWelcome = false
+    @State private var selectedFolderID: UUID?
+    @State private var creatingFolder = false
+    @State private var newFolderName = ""
+    @State private var showSettings = false
+    @State private var idCardMode = false
+    @State private var idFront: UIImage?
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -31,6 +43,7 @@ struct HomeView: View {
                             emptyState
                         } else {
                             searchField
+                            folderBar
                             if arranged.isEmpty {
                                 noMatchesState
                             } else {
@@ -56,10 +69,20 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showMerge) { MergeView() }
             .sheet(isPresented: $showPaywall) { PaywallView() }
+            .sheet(item: $batch) { captured in ReviewScanView(images: captured.images) }
+            .onChange(of: photoItem) { _, item in loadPhoto(item) }
+            .sheet(isPresented: $showWelcome, onDismiss: { didSeeWelcome = true }) { FirstRunView() }
+            .sheet(isPresented: $showSettings) { SettingsView() }
+            .onAppear { if !didSeeWelcome { showWelcome = true } }
             .alert("Rename document", isPresented: renameBinding) {
                 TextField("Name", text: $renameText)
                 Button("Save") { commitRename() }
                 Button("Cancel", role: .cancel) { renaming = nil }
+            }
+            .alert("New folder", isPresented: $creatingFolder) {
+                TextField("Folder name", text: $newFolderName)
+                Button("Create") { commitNewFolder() }
+                Button("Cancel", role: .cancel) { newFolderName = "" }
             }
         }
     }
@@ -76,15 +99,26 @@ struct HomeView: View {
             }
             Spacer()
             HStack(spacing: 16) {
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    Image(systemName: "photo.badge.plus").font(.system(size: 16, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
                 if !iap.isPro { proButton }
                 if !documents.isEmpty { sortMenu }
                 if documents.count >= 2 {
                     Button { combine() } label: {
-                        Label("Combine", systemImage: "doc.on.doc")
-                            .font(.system(size: 14, weight: .semibold))
+                        Image(systemName: "doc.on.doc").font(.system(size: 16, weight: .semibold))
                     }
                     .tint(PaperTheme.accent)
                 }
+                Button { startIDCard() } label: {
+                    Image(systemName: "person.text.rectangle").font(.system(size: 16, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
+                Button { showSettings = true } label: {
+                    Image(systemName: "gearshape").font(.system(size: 16, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
             }
         }
     }
@@ -107,8 +141,7 @@ struct HomeView: View {
                 }
             }
         } label: {
-            Label("Sort", systemImage: "arrow.up.arrow.down.circle")
-                .font(.system(size: 14, weight: .semibold))
+            Image(systemName: "arrow.up.arrow.down.circle").font(.system(size: 16, weight: .semibold))
         }
         .tint(PaperTheme.accent)
     }
@@ -157,7 +190,7 @@ struct HomeView: View {
     }
 
     private var arranged: [ScannedDocument] {
-        LibraryArranging.arrange(documents, sort: sort, query: searchText)
+        LibraryArranging.arrange(documents, sort: sort, query: searchText, folderID: selectedFolderID)
     }
 
     private func library(_ docs: [ScannedDocument]) -> some View {
@@ -192,6 +225,12 @@ struct HomeView: View {
                     }
                     Button { duplicate(doc) } label: { Label("Duplicate", systemImage: "plus.square.on.square") }
                     Button { rotate(doc) } label: { Label("Rotate 90°", systemImage: "rotate.right") }
+                    Menu {
+                        Button { setFolder(doc, nil) } label: { Label("None", systemImage: "tray") }
+                        ForEach(folders) { folder in
+                            Button { setFolder(doc, folder.uuid) } label: { Label(folder.name, systemImage: "folder") }
+                        }
+                    } label: { Label("Move to…", systemImage: "folder") }
                     Divider()
                     Button(role: .destructive) { delete(doc) } label: { Label("Delete", systemImage: "trash") }
                 }
@@ -239,13 +278,37 @@ struct HomeView: View {
     }
 
     private func handleScan(_ images: [UIImage]) {
-        guard !images.isEmpty else { return }
-        let data = PDFAssembler().assemble(images: images)
-        _ = try? DocumentStore(context: context).save(
-            title: Samples.autoName(),
-            pdfData: data,
-            pageCount: images.count
-        )
+        guard let first = images.first else { return }
+        if idCardMode {
+            if idFront == nil {
+                idFront = first          // captured the front; capture the back next
+                startScan()
+            } else if let front = idFront {
+                idCardMode = false
+                idFront = nil
+                batch = CapturedBatch(images: [IDCardComposer().compose(front: front, back: first)])
+            }
+            return
+        }
+        // Review & enhance before saving; the save then OCRs (free searchable layer).
+        batch = CapturedBatch(images: images)
+    }
+
+    private func startIDCard() {
+        idCardMode = true
+        idFront = nil
+        startScan()
+    }
+
+    private func loadPhoto(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        Task {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                batch = CapturedBatch(images: [image])
+            }
+            photoItem = nil
+        }
     }
 
     private func combine() {
@@ -278,4 +341,53 @@ struct HomeView: View {
     private func rotate(_ doc: ScannedDocument) {
         try? DocumentStore(context: context).rotate(doc)
     }
+
+    private func setFolder(_ doc: ScannedDocument, _ id: UUID?) {
+        try? DocumentStore(context: context).setFolder(doc, folderID: id)
+    }
+
+    private func commitNewFolder() {
+        let name = newFolderName.trimmingCharacters(in: .whitespaces)
+        newFolderName = ""
+        guard !name.isEmpty else { return }
+        _ = try? DocumentStore(context: context).createFolder(name: name)
+    }
+
+    private var folderBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                folderChip(title: "All", id: nil)
+                ForEach(folders) { folder in folderChip(title: folder.name, id: folder.uuid) }
+                Button { creatingFolder = true } label: {
+                    Label("New", systemImage: "folder.badge.plus")
+                        .font(.system(size: 13, weight: .semibold))
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                        .background(PaperTheme.card, in: Capsule())
+                        .overlay(Capsule().strokeBorder(PaperTheme.cardEdge, lineWidth: 0.5))
+                        .foregroundStyle(PaperTheme.accent)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private func folderChip(title: String, id: UUID?) -> some View {
+        let selected = selectedFolderID == id
+        return Button { selectedFolderID = id } label: {
+            Text(title)
+                .font(.system(size: 13, weight: .semibold))
+                .padding(.horizontal, 14).padding(.vertical, 7)
+                .background(selected ? PaperTheme.accent : PaperTheme.card, in: Capsule())
+                .foregroundStyle(selected ? PaperTheme.scanButtonGlyph : PaperTheme.inkSecondary)
+                .overlay(Capsule().strokeBorder(selected ? Color.clear : PaperTheme.cardEdge, lineWidth: 0.5))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// A freshly captured or imported batch awaiting review. Identifiable so it can
+/// drive a `.sheet(item:)` presentation.
+struct CapturedBatch: Identifiable {
+    let id = UUID()
+    let images: [UIImage]
 }

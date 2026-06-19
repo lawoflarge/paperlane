@@ -6,15 +6,6 @@ import UIKit
 struct ProDocumentActions {
     let files: DocumentFileStore
 
-    /// Rasterize each page, OCR it, and overwrite the file with a searchable PDF.
-    @discardableResult
-    func makeSearchable(_ document: ScannedDocument) -> Bool {
-        guard let images = pageImages(of: document), !images.isEmpty else { return false }
-        let searchable = OCRService().makeSearchablePDF(images: images)
-        _ = try? files.write(searchable, fileName: document.fileName)
-        return true
-    }
-
     /// First page exported as JPG/PNG.
     func exportImage(_ document: ScannedDocument, format: ImageExporter.Format) -> Data? {
         guard let image = pageImages(of: document)?.first else { return nil }

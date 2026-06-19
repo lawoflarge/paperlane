@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import UIKit
 
 /// SwiftData-backed library CRUD. `@MainActor` because `ModelContext` is not Sendable.
 /// Pairs the metadata model with on-disk PDF bytes via `DocumentFileStore`.
@@ -19,7 +20,8 @@ struct DocumentStore {
         title: String,
         pdfData: Data,
         pageCount: Int,
-        createdAt: Date = .now
+        createdAt: Date = .now,
+        ocrText: String = ""
     ) throws -> ScannedDocument {
         let fileName = "\(UUID().uuidString).pdf"
         try files.write(pdfData, fileName: fileName)
@@ -28,11 +30,31 @@ struct DocumentStore {
             createdAt: createdAt,
             pageCount: pageCount,
             fileName: fileName,
-            fileSizeBytes: pdfData.count
+            fileSizeBytes: pdfData.count,
+            ocrText: ocrText
         )
         context.insert(doc)
         try context.save()
         return doc
+    }
+
+    /// Persist a freshly-captured scan: run one on-device OCR pass to build a
+    /// searchable PDF and index its text (free), then save. The text powers free
+    /// in-document search and Pro text export.
+    @discardableResult
+    func saveScan(
+        title: String,
+        images: [UIImage],
+        createdAt: Date = .now
+    ) throws -> ScannedDocument {
+        let result = OCRService().makeSearchable(images: images)
+        return try save(
+            title: title,
+            pdfData: result.data,
+            pageCount: images.count,
+            createdAt: createdAt,
+            ocrText: result.text
+        )
     }
 
     /// All documents, newest first.
@@ -77,6 +99,38 @@ struct DocumentStore {
         guard let rotated = PDFRotator().rotated(data, clockwiseQuarterTurns: 1) else { return }
         try files.write(rotated, fileName: doc.fileName)
         doc.fileSizeBytes = rotated.count
+        try context.save()
+    }
+
+    /// Replace a document's PDF bytes in place after a page edit (reorder/delete/
+    /// append) and update its page count + size (free).
+    func replace(_ doc: ScannedDocument, withData data: Data, pageCount: Int) throws {
+        try files.write(data, fileName: doc.fileName)
+        doc.pageCount = pageCount
+        doc.fileSizeBytes = data.count
+        try context.save()
+    }
+
+    /// Assign (or clear) a document's folder (free organisation).
+    func setFolder(_ doc: ScannedDocument, folderID: UUID?) throws {
+        doc.folderID = folderID
+        try context.save()
+    }
+
+    @discardableResult
+    func createFolder(name: String) throws -> Folder {
+        let folder = Folder(name: name)
+        context.insert(folder)
+        try context.save()
+        return folder
+    }
+
+    /// Delete a folder and un-file any documents that referenced it.
+    func deleteFolder(_ folder: Folder) throws {
+        let fid = folder.uuid
+        let all = (try? context.fetch(FetchDescriptor<ScannedDocument>())) ?? []
+        for doc in all where doc.folderID == fid { doc.folderID = nil }
+        context.delete(folder)
         try context.save()
     }
 

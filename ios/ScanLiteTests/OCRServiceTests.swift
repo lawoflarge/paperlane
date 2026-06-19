@@ -21,4 +21,11 @@ struct OCRServiceTests {
         let recognized = OCRService().recognizeText(in: image)
         #expect(!recognized.isEmpty)
     }
+
+    @Test func makeSearchableReturnsPdfAndText() {
+        let image = ImageFixtures.page("RECEIPT TOTAL DUE", size: CGSize(width: 800, height: 400))
+        let result = OCRService().makeSearchable(images: [image])
+        #expect(PDFDocument(data: result.data)?.pageCount == 1)
+        #expect(!result.text.isEmpty)   // single pass yields the indexable text
+    }
 }

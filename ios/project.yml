@@ -10,8 +10,8 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: R95M36AU2X
-    MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "6"
+    MARKETING_VERSION: "2.0"
+    CURRENT_PROJECT_VERSION: "7"
     TARGETED_DEVICE_FAMILY: "1,2"
 
 targets:
@@ -34,6 +34,9 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         NSCameraUsageDescription: "ScanLite uses the camera to scan your documents into PDFs. Pages are processed on your device and never uploaded."
+        NSPhotoLibraryUsageDescription: "ScanLite imports photos you choose so you can turn them into clean, searchable PDFs. Images are processed on your device."
+        NSFaceIDUsageDescription: "ScanLite uses Face ID to lock your document library on this device."
+        NSContactsUsageDescription: "ScanLite can save a scanned business card directly to your Contacts."
         ITSAppUsesNonExemptEncryption: false
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait

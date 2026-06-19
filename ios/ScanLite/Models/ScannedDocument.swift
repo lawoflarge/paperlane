@@ -15,6 +15,15 @@ final class ScannedDocument {
     /// User-starred documents pin to the top of the library. Defaulted so SwiftData
     /// performs a lightweight migration for any pre-existing records.
     var isFavorite: Bool = false
+    /// Recognized text from the on-device OCR pass at save time. Powers free
+    /// in-document search and is the source for Pro text export. Defaulted so
+    /// SwiftData performs a lightweight migration for pre-v2 records.
+    var ocrText: String = ""
+    /// Optional folder assignment (free organisation). Matches `Folder.uuid`;
+    /// `nil` = unfiled. Defaulted/optional → migration-safe + CloudKit-ready.
+    var folderID: UUID? = nil
+    /// Free-form tags (free organisation).
+    var tags: [String] = []
 
     init(
         title: String,
@@ -22,7 +31,10 @@ final class ScannedDocument {
         pageCount: Int,
         fileName: String,
         fileSizeBytes: Int,
-        isFavorite: Bool = false
+        isFavorite: Bool = false,
+        ocrText: String = "",
+        folderID: UUID? = nil,
+        tags: [String] = []
     ) {
         self.title = title
         self.createdAt = createdAt
@@ -30,5 +42,8 @@ final class ScannedDocument {
         self.fileName = fileName
         self.fileSizeBytes = fileSizeBytes
         self.isFavorite = isFavorite
+        self.ocrText = ocrText
+        self.folderID = folderID
+        self.tags = tags
     }
 }

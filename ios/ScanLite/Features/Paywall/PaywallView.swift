@@ -9,9 +9,10 @@ struct PaywallView: View {
     @State private var working = false
 
     private let features: [(icon: String, text: String)] = [
-        ("text.viewfinder", "Searchable OCR text layer"),
+        ("text.viewfinder", "Export text to .txt & Word (.docx)"),
+        ("arrow.down.right.and.arrow.up.left", "Compress PDFs to email-friendly size"),
         ("doc.on.doc", "Combine pages into one PDF"),
-        ("photo", "Export as JPG or PNG"),
+        ("photo", "Export pages as JPG or PNG"),
         ("lock", "Password-protect your PDFs")
     ]
 
