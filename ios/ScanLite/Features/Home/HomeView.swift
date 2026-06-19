@@ -18,6 +18,8 @@ struct HomeView: View {
     @State private var searchText = ""
     @State private var batch: CapturedBatch?
     @State private var photoItem: PhotosPickerItem?
+    @AppStorage("didSeeWelcomeV2") private var didSeeWelcome = false
+    @State private var showWelcome = false
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -61,6 +63,8 @@ struct HomeView: View {
             .sheet(isPresented: $showPaywall) { PaywallView() }
             .sheet(item: $batch) { captured in ReviewScanView(images: captured.images) }
             .onChange(of: photoItem) { _, item in loadPhoto(item) }
+            .sheet(isPresented: $showWelcome, onDismiss: { didSeeWelcome = true }) { FirstRunView() }
+            .onAppear { if !didSeeWelcome { showWelcome = true } }
             .alert("Rename document", isPresented: renameBinding) {
                 TextField("Name", text: $renameText)
                 Button("Save") { commitRename() }

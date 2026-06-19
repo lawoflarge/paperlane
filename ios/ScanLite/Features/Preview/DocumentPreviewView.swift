@@ -60,13 +60,25 @@ struct DocumentPreviewView: View {
 
     private var proMenu: some View {
         Menu {
+            Menu {
+                Button { gated { copyText() } } label: { Label("Copy text", systemImage: "doc.on.clipboard") }
+                Button { gated { exportText(.txt) } } label: { Label("Export .txt", systemImage: "doc.text") }
+                Button { gated { exportText(.docx) } } label: { Label("Export .docx (Word)", systemImage: "doc.richtext") }
+            } label: { Label("Export text", systemImage: "text.viewfinder") }
             Button { gated { export(.jpeg) } } label: { Label("Export as JPG", systemImage: "photo") }
             Button { gated { export(.png) } } label: { Label("Export as PNG", systemImage: "photo.on.rectangle") }
+            Menu {
+                ForEach(PDFCompressor.Quality.allCases) { quality in
+                    Button { gated { compress(quality) } } label: { Text(quality.label) }
+                }
+            } label: { Label("Compress PDF", systemImage: "arrow.down.right.and.arrow.up.left") }
             Button { gated { askPassword = true } } label: { Label("Password Protect", systemImage: "lock") }
         } label: {
             Image(systemName: "wand.and.stars")
         }
     }
+
+    private enum TextFormat { case txt, docx }
 
     // MARK: - Pro gate
 
@@ -87,6 +99,29 @@ struct DocumentPreviewView: View {
         let ext = format == .jpeg ? "jpg" : "png"
         let out = URL.temporaryDirectory.appending(path: "\(document.title).\(ext)")
         try? data.write(to: out)
+        shareItem = ShareItem(url: out)
+    }
+
+    private func copyText() {
+        UIPasteboard.general.string = document.ocrText
+    }
+
+    private func exportText(_ format: TextFormat) {
+        let exporter = TextDocumentExporter()
+        let text = document.ocrText
+        let (data, ext): (Data, String) = format == .txt
+            ? (exporter.txtData(text), "txt")
+            : (exporter.docxData(text), "docx")
+        let out = URL.temporaryDirectory.appending(path: "\(document.title).\(ext)")
+        try? data.write(to: out)
+        shareItem = ShareItem(url: out)
+    }
+
+    private func compress(_ quality: PDFCompressor.Quality) {
+        guard let data = try? files.read(fileName: document.fileName),
+              let compressed = PDFCompressor().compress(data, quality: quality) else { return }
+        let out = URL.temporaryDirectory.appending(path: "\(document.title) (compressed).pdf")
+        try? compressed.write(to: out)
         shareItem = ShareItem(url: out)
     }
 
