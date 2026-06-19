@@ -18,6 +18,7 @@ struct DocumentPreviewView: View {
     @State private var shareItem: ShareItem?
     @State private var askPassword = false
     @State private var password = ""
+    @State private var showPages = false
 
     private var url: URL { files.fileURL(document.fileName) }
 
@@ -44,9 +45,15 @@ struct DocumentPreviewView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { rotate() } label: { Image(systemName: "rotate.right") }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showPages = true } label: { Image(systemName: "square.stack") }
+                }
                 ToolbarItem(placement: .topBarTrailing) { proMenu }
             }
             .tint(PaperTheme.accent)
+            .sheet(isPresented: $showPages, onDismiss: { reloadToken = UUID() }) {
+                PageManagerView(document: document, files: files)
+            }
             .sheet(isPresented: $showShare) { ShareSheet(items: [url]) }
             .sheet(item: $shareItem) { item in ShareSheet(items: [item.url]) }
             .sheet(isPresented: $showPaywall) { PaywallView() }

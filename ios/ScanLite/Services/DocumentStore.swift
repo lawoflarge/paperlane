@@ -102,6 +102,15 @@ struct DocumentStore {
         try context.save()
     }
 
+    /// Replace a document's PDF bytes in place after a page edit (reorder/delete/
+    /// append) and update its page count + size (free).
+    func replace(_ doc: ScannedDocument, withData data: Data, pageCount: Int) throws {
+        try files.write(data, fileName: doc.fileName)
+        doc.pageCount = pageCount
+        doc.fileSizeBytes = data.count
+        try context.save()
+    }
+
     func delete(_ doc: ScannedDocument) throws {
         try? files.delete(fileName: doc.fileName)
         context.delete(doc)
