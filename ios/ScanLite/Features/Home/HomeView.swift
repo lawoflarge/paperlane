@@ -24,6 +24,9 @@ struct HomeView: View {
     @State private var selectedFolderID: UUID?
     @State private var creatingFolder = false
     @State private var newFolderName = ""
+    @State private var showSettings = false
+    @State private var idCardMode = false
+    @State private var idFront: UIImage?
 
     private let files = DocumentFileStore.defaultStore()
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 16)]
@@ -69,6 +72,7 @@ struct HomeView: View {
             .sheet(item: $batch) { captured in ReviewScanView(images: captured.images) }
             .onChange(of: photoItem) { _, item in loadPhoto(item) }
             .sheet(isPresented: $showWelcome, onDismiss: { didSeeWelcome = true }) { FirstRunView() }
+            .sheet(isPresented: $showSettings) { SettingsView() }
             .onAppear { if !didSeeWelcome { showWelcome = true } }
             .alert("Rename document", isPresented: renameBinding) {
                 TextField("Name", text: $renameText)
@@ -109,6 +113,14 @@ struct HomeView: View {
                     }
                     .tint(PaperTheme.accent)
                 }
+                Button { startIDCard() } label: {
+                    Image(systemName: "person.text.rectangle").font(.system(size: 16, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
+                Button { showSettings = true } label: {
+                    Image(systemName: "gearshape").font(.system(size: 16, weight: .semibold))
+                }
+                .tint(PaperTheme.accent)
             }
         }
     }
@@ -269,9 +281,26 @@ struct HomeView: View {
     }
 
     private func handleScan(_ images: [UIImage]) {
-        guard !images.isEmpty else { return }
+        guard let first = images.first else { return }
+        if idCardMode {
+            if idFront == nil {
+                idFront = first          // captured the front; capture the back next
+                startScan()
+            } else if let front = idFront {
+                idCardMode = false
+                idFront = nil
+                batch = CapturedBatch(images: [IDCardComposer().compose(front: front, back: first)])
+            }
+            return
+        }
         // Review & enhance before saving; the save then OCRs (free searchable layer).
         batch = CapturedBatch(images: images)
+    }
+
+    private func startIDCard() {
+        idCardMode = true
+        idFront = nil
+        startScan()
     }
 
     private func loadPhoto(_ item: PhotosPickerItem?) {
