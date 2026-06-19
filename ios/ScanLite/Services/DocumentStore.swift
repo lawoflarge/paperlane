@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import UIKit
 
 /// SwiftData-backed library CRUD. `@MainActor` because `ModelContext` is not Sendable.
 /// Pairs the metadata model with on-disk PDF bytes via `DocumentFileStore`.
@@ -19,7 +20,8 @@ struct DocumentStore {
         title: String,
         pdfData: Data,
         pageCount: Int,
-        createdAt: Date = .now
+        createdAt: Date = .now,
+        ocrText: String = ""
     ) throws -> ScannedDocument {
         let fileName = "\(UUID().uuidString).pdf"
         try files.write(pdfData, fileName: fileName)
@@ -28,11 +30,31 @@ struct DocumentStore {
             createdAt: createdAt,
             pageCount: pageCount,
             fileName: fileName,
-            fileSizeBytes: pdfData.count
+            fileSizeBytes: pdfData.count,
+            ocrText: ocrText
         )
         context.insert(doc)
         try context.save()
         return doc
+    }
+
+    /// Persist a freshly-captured scan: run one on-device OCR pass to build a
+    /// searchable PDF and index its text (free), then save. The text powers free
+    /// in-document search and Pro text export.
+    @discardableResult
+    func saveScan(
+        title: String,
+        images: [UIImage],
+        createdAt: Date = .now
+    ) throws -> ScannedDocument {
+        let result = OCRService().makeSearchable(images: images)
+        return try save(
+            title: title,
+            pdfData: result.data,
+            pageCount: images.count,
+            createdAt: createdAt,
+            ocrText: result.text
+        )
     }
 
     /// All documents, newest first.

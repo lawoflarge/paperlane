@@ -37,7 +37,10 @@ enum LibraryArranging {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered = trimmed.isEmpty
             ? documents
-            : documents.filter { $0.title.localizedStandardContains(trimmed) }
+            : documents.filter {
+                $0.title.localizedStandardContains(trimmed)
+                    || $0.ocrText.localizedStandardContains(trimmed)
+            }
 
         return filtered.sorted { lhs, rhs in
             if lhs.isFavorite != rhs.isFavorite { return lhs.isFavorite }

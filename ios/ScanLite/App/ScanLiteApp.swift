@@ -11,6 +11,6 @@ struct ScanLiteApp: App {
                 .environment(iap)
                 .task { await iap.start() }
         }
-        .modelContainer(for: ScannedDocument.self)
+        .modelContainer(for: [ScannedDocument.self, Folder.self])
     }
 }

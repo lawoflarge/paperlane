@@ -240,11 +240,10 @@ struct HomeView: View {
 
     private func handleScan(_ images: [UIImage]) {
         guard !images.isEmpty else { return }
-        let data = PDFAssembler().assemble(images: images)
-        _ = try? DocumentStore(context: context).save(
+        // Every scan is OCR'd on-device at save → searchable PDF + indexed text (free).
+        _ = try? DocumentStore(context: context).saveScan(
             title: Samples.autoName(),
-            pdfData: data,
-            pageCount: images.count
+            images: images
         )
     }
 

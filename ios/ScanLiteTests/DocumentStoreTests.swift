@@ -92,4 +92,16 @@ struct DocumentStoreTests {
             #expect(doc.pageCount == 1)
         }
     }
+
+    @Test func saveScanIndexesOcrTextAndIsSearchable() throws {
+        let (store, container) = try makeStore()
+        try withExtendedLifetime(container) {
+            let pages = [ImageFixtures.page("INVOICE TOTAL DUE", size: CGSize(width: 800, height: 400))]
+            let doc = try store.saveScan(title: "Scan", images: pages)
+            #expect(doc.pageCount == 1)
+            #expect(!doc.ocrText.isEmpty)   // text indexed for free in-document search
+            let pdf = PDFDocument(data: try store.files.read(fileName: doc.fileName))
+            #expect((pdf?.string ?? "").isEmpty == false)   // selectable OCR layer present
+        }
+    }
 }

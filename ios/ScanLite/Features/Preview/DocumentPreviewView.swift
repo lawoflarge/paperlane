@@ -60,7 +60,6 @@ struct DocumentPreviewView: View {
 
     private var proMenu: some View {
         Menu {
-            Button { gated { makeSearchable() } } label: { Label("Make Searchable (OCR)", systemImage: "text.viewfinder") }
             Button { gated { export(.jpeg) } } label: { Label("Export as JPG", systemImage: "photo") }
             Button { gated { export(.png) } } label: { Label("Export as PNG", systemImage: "photo.on.rectangle") }
             Button { gated { askPassword = true } } label: { Label("Password Protect", systemImage: "lock") }
@@ -81,16 +80,6 @@ struct DocumentPreviewView: View {
     private func rotate() {
         try? DocumentStore(context: context).rotate(document)
         reloadToken = UUID()
-    }
-
-    private func makeSearchable() {
-        working = true
-        Task {
-            await Task.yield()
-            _ = ProDocumentActions(files: files).makeSearchable(document)
-            reloadToken = UUID()
-            working = false
-        }
     }
 
     private func export(_ format: ImageExporter.Format) {
