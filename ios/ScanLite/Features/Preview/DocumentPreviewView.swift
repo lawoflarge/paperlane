@@ -9,6 +9,9 @@ struct DocumentPreviewView: View {
     let document: ScannedDocument
     let files: DocumentFileStore
     @Environment(IAPManager.self) private var iap
+    @Environment(ConsentManager.self) private var consent
+    @Environment(AdGate.self) private var gate
+    @Environment(InterstitialAdManager.self) private var interstitial
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
 
@@ -43,7 +46,7 @@ struct DocumentPreviewView: View {
             .navigationTitle(document.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button("Done") { dismiss() } }
+                ToolbarItem(placement: .topBarLeading) { Button("Done") { finishPreview() } }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showShare = true } label: { Image(systemName: "square.and.arrow.up") }
                 }
@@ -104,6 +107,17 @@ struct DocumentPreviewView: View {
     }
 
     private enum TextFormat { case txt, docx }
+
+    // MARK: - Dismiss (capped interstitial for free users)
+
+    private func finishPreview() {
+        if !iap.isPro && consent.canRequestAds && gate.canShowInterstitial {
+            gate.recordInterstitial()
+            interstitial.present { dismiss() }
+        } else {
+            dismiss()
+        }
+    }
 
     // MARK: - Pro gate
 

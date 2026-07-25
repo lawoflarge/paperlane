@@ -6,6 +6,7 @@ import PhotosUI
 struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Environment(IAPManager.self) private var iap
+    @Environment(ConsentManager.self) private var consent
     @Query(sort: \ScannedDocument.createdAt, order: .reverse) private var documents: [ScannedDocument]
     @Query(sort: \Folder.createdAt) private var folders: [Folder]
 
@@ -58,6 +59,21 @@ struct HomeView: View {
                 InkScanButton(action: startScan)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 12)
+            }
+            .safeAreaInset(edge: .bottom) {
+                if !iap.isPro && consent.canRequestAds {
+                    VStack(spacing: 0) {
+                        Button { showPaywall = true } label: {
+                            Text("Remove ads — unlock Pro")
+                                .font(.caption)
+                                .foregroundStyle(PaperTheme.inkSecondary)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 2)
+                        }
+                        AdBannerView()
+                    }
+                    .background(PaperTheme.surface)
+                }
             }
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(isPresented: $showScanner) {

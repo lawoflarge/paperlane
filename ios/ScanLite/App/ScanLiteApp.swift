@@ -5,6 +5,9 @@ import SwiftData
 struct ScanLiteApp: App {
     @State private var iap = IAPManager()
     @State private var appLock = AppLock()
+    @State private var consent = ConsentManager()
+    @State private var gate = AdGate()
+    @State private var interstitial = InterstitialAdManager()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -18,7 +21,15 @@ struct ScanLiteApp: App {
             }
             .environment(iap)
             .environment(appLock)
-            .task { await iap.start() }
+            .environment(consent)
+            .environment(gate)
+            .environment(interstitial)
+            .task {
+                await iap.start()
+                await consent.bootstrap()
+                AdGate.bumpSession()
+                interstitial.preload()
+            }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .background { appLock.lockIfEnabled() }
             }
