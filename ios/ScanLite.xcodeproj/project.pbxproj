@@ -455,8 +455,6 @@
 				B4098F0F05A0CB93ECF4B072 /* PBXTargetDependency */,
 			);
 			name = ScanLiteTests;
-			packageProductDependencies = (
-			);
 			productName = ScanLiteTests;
 			productReference = BE4671A862B3E037C4133E27 /* ScanLiteTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -496,7 +494,7 @@
 					};
 					CC041694A36B3DB6793ADF87 = {
 						DevelopmentTeam = R95M36AU2X;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -651,8 +649,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = R95M36AU2X;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ScanLite/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -660,6 +659,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = de.levinschwab.scanlite;
+				PROVISIONING_PROFILE_SPECIFIER = "GEO scanlite AppStore";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
