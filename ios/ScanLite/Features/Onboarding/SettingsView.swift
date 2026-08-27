@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppLock.self) private var appLock
     @Environment(IAPManager.self) private var iap
+    @Environment(ConsentManager.self) private var consent
     @Environment(\.dismiss) private var dismiss
     @State private var lockOn = false
 
@@ -29,6 +30,11 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    if consent.privacyOptionsRequired {
+                        Button { consent.presentPrivacyOptions() } label: {
+                            Label("Ad privacy options", systemImage: "hand.raised.circle")
+                        }
+                    }
                     Link(destination: URL(string: "https://getscanlite.vercel.app/privacy")!) {
                         Label("Privacy policy", systemImage: "hand.raised")
                     }

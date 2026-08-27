@@ -28,7 +28,7 @@ struct ScanLiteApp: App {
                 await iap.start()
                 await consent.bootstrap()
                 AdGate.bumpSession()
-                interstitial.preload()
+                if consent.canRequestAds && !iap.isPro { interstitial.preload() }
             }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .background { appLock.lockIfEnabled() }
