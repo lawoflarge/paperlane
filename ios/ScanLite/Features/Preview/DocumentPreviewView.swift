@@ -27,13 +27,15 @@ struct DocumentPreviewView: View {
     @State private var markupImage: UIImage?
     @State private var showContact = false
     @State private var contactToSave: CNContact?
+    /// Page the reader is on; markup edits this page, not always the first one.
+    @State private var currentPageIndex = 0
 
     private var url: URL { files.fileURL(document.fileName) }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                PDFKitView(url: url)
+                PDFKitView(url: url, currentPage: $currentPageIndex)
                     .id(reloadToken)
                     .ignoresSafeArea(edges: .bottom)
                     .background(PaperTheme.surface)
@@ -166,7 +168,8 @@ struct DocumentPreviewView: View {
 
     private func startMarkup() {
         guard let data = try? files.read(fileName: document.fileName),
-              let pdf = PDFDocument(data: data), let page = pdf.page(at: 0) else { return }
+              let pdf = PDFDocument(data: data),
+              let page = pdf.page(at: markupPageIndex(in: pdf)) else { return }
         let bounds = page.bounds(for: .mediaBox)
         markupImage = page.thumbnail(of: bounds.size, for: .mediaBox)
         showMarkup = true
@@ -175,11 +178,18 @@ struct DocumentPreviewView: View {
     private func applyMarkup(_ flattened: UIImage) {
         guard let data = try? files.read(fileName: document.fileName),
               let pdf = PDFDocument(data: data), let newPage = PDFPage(image: flattened) else { return }
-        pdf.removePage(at: 0)
-        pdf.insert(newPage, at: 0)
+        let index = markupPageIndex(in: pdf)
+        pdf.removePage(at: index)
+        pdf.insert(newPage, at: index)
         guard let out = pdf.dataRepresentation() else { return }
         try? DocumentStore(context: context).replace(document, withData: out, pageCount: pdf.pageCount)
         reloadToken = UUID()
+    }
+
+    /// The visible page, clamped into the document. Markup used to hard-code page 0,
+    /// so annotating any later page silently rasterised and replaced the first one.
+    private func markupPageIndex(in pdf: PDFDocument) -> Int {
+        min(max(currentPageIndex, 0), max(pdf.pageCount - 1, 0))
     }
 
     private func startContact() {
@@ -227,11 +237,34 @@ struct ShareItem: Identifiable {
 
 private struct PDFKitView: UIViewRepresentable {
     let url: URL
+    /// Index of the page the reader is actually looking at, so per-page actions
+    /// (markup) act on it instead of always on page one.
+    @Binding var currentPage: Int
+
+    func makeCoordinator() -> Coordinator { Coordinator(currentPage: $currentPage) }
+
+    final class Coordinator: NSObject {
+        private let currentPage: Binding<Int>
+        init(currentPage: Binding<Int>) { self.currentPage = currentPage }
+
+        @objc func pageChanged(_ note: Notification) {
+            guard let view = note.object as? PDFView,
+                  let page = view.currentPage,
+                  let index = view.document?.index(for: page) else { return }
+            currentPage.wrappedValue = index
+        }
+    }
+
     func makeUIView(context: Context) -> PDFView {
         let view = PDFView()
         view.autoScales = true
         view.backgroundColor = .clear
         view.document = PDFDocument(url: url)
+        NotificationCenter.default.addObserver(
+            context.coordinator,
+            selector: #selector(Coordinator.pageChanged(_:)),
+            name: .PDFViewPageChanged,
+            object: view)
         return view
     }
     func updateUIView(_ view: PDFView, context: Context) {
