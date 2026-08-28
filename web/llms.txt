@@ -1,23 +1,23 @@
-# ScanLite: Scan to PDF
+# Paperlane: Scan to PDF
 
-> ScanLite is a free iPhone app that scans paper documents into clean, multi-page PDFs using Apple's on-device VisionKit edge detection and perspective correction. Scanning, real multi-page PDF export, and the local library are free forever, with no watermark, no scan limit, and no account. An optional one-time ScanLite Pro purchase adds searchable OCR, page merging, JPG/PNG export, and password-protected PDFs. Everything runs on-device; nothing is uploaded.
+> Paperlane is a free iPhone app that scans paper documents into clean, multi-page PDFs using Apple's on-device VisionKit edge detection and perspective correction. Scanning, real multi-page PDF export, and the local library are free forever, with no watermark, no scan limit, and no account. An optional one-time Paperlane Pro purchase adds searchable OCR, page merging, JPG/PNG export, and password-protected PDFs. Everything runs on-device; nothing is uploaded.
 
 ## App
-- [Download on the App Store](https://apps.apple.com/us/app/scanlite-scan-to-pdf/id6780053638): Free, iOS, Productivity.
-- [Pricing](https://getscanlite.vercel.app/pricing.md): Free to scan and export PDFs; ScanLite Pro is a one-time EUR 4.99 purchase (no subscription).
-- [FAQ](https://getscanlite.vercel.app/#faq): Free tier, offline use, watermarks, cost, privacy, and OCR.
+- [Download on the App Store](https://apps.apple.com/us/app/paperlane-scan-to-pdf/id6780053638): Free, iOS, Productivity.
+- [Pricing](https://getpaperlane.vercel.app/pricing.md): Free to scan and export PDFs; Paperlane Pro is a one-time EUR 4.99 purchase (no subscription).
+- [FAQ](https://getpaperlane.vercel.app/#faq): Free tier, offline use, watermarks, cost, privacy, and OCR.
 
 ## What it does
 - Scan to PDF: automatic edge detection and perspective correction (Apple VisionKit).
 - Real, multi-page PDFs that open, print, and share anywhere — never image-only, never watermarked.
 - Local, on-device library you own — documents never leave the iPhone.
-- ScanLite Pro (one-time): searchable OCR text layer (Apple Vision), combine pages, export JPG/PNG, password-protect PDFs.
+- Paperlane Pro (one-time): searchable OCR text layer (Apple Vision), combine pages, export JPG/PNG, password-protect PDFs.
 
 ## Privacy
 - No servers, no account, no cloud sync. Every scan is processed and stored on-device.
 - Works fully offline, including airplane mode.
 
 ## Support
-- [Support](https://getscanlite.vercel.app/#support) — email levin.schwab@gmx.de
-- [Privacy Policy](https://getscanlite.vercel.app/privacy)
-- [Terms of Use](https://getscanlite.vercel.app/terms)
+- [Support](https://getpaperlane.vercel.app/#support) — email levin.schwab@gmx.de
+- [Privacy Policy](https://getpaperlane.vercel.app/privacy)
+- [Terms of Use](https://getpaperlane.vercel.app/terms)

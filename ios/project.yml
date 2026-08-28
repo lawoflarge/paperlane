@@ -1,4 +1,4 @@
-name: ScanLite
+name: Paperlane
 options:
   bundleIdPrefix: de.levinschwab
   deploymentTarget:
@@ -10,8 +10,8 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: R95M36AU2X
-    MARKETING_VERSION: "2.0"
-    CURRENT_PROJECT_VERSION: "7"
+    MARKETING_VERSION: "2.1.0"
+    CURRENT_PROJECT_VERSION: "1787942199"
     TARGETED_DEVICE_FAMILY: "1,2"
 
 packages:
@@ -23,31 +23,31 @@ packages:
     from: "3.0.0"
 
 targets:
-  ScanLite:
+  Paperlane:
     type: application
     platform: iOS
     sources:
-      - path: ScanLite
+      - path: Paperlane
     dependencies:
       - package: GoogleMobileAds
       - package: GoogleUserMessagingPlatform
     scheme:
       testTargets:
-        - ScanLiteTests
-      storeKitConfiguration: ScanLite/Resources/ScanLite.storekit
+        - PaperlaneTests
+      storeKitConfiguration: Paperlane/Resources/Paperlane.storekit
     info:
-      path: ScanLite/Info.plist
+      path: Paperlane/Info.plist
       properties:
-        CFBundleDisplayName: ScanLite
+        CFBundleDisplayName: Paperlane
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
-        NSCameraUsageDescription: "ScanLite uses the camera to scan your documents into PDFs. Pages are processed on your device and never uploaded."
-        NSPhotoLibraryUsageDescription: "ScanLite imports photos you choose so you can turn them into clean, searchable PDFs. Images are processed on your device."
-        NSFaceIDUsageDescription: "ScanLite uses Face ID to lock your document library on this device."
-        NSContactsUsageDescription: "ScanLite can save a scanned business card directly to your Contacts."
+        NSCameraUsageDescription: "Paperlane uses the camera to scan your documents into PDFs. Pages are processed on your device and never uploaded."
+        NSPhotoLibraryUsageDescription: "Paperlane imports photos you choose so you can turn them into clean, searchable PDFs. Images are processed on your device."
+        NSFaceIDUsageDescription: "Paperlane uses Face ID to lock your document library on this device."
+        NSContactsUsageDescription: "Paperlane can save a scanned business card directly to your Contacts."
         NSUserTrackingUsageDescription: "We use your data to show you more relevant ads."
         GADApplicationIdentifier: "ca-app-pub-6563643868702361~9176869594"
         SKAdNetworkItems:
@@ -112,16 +112,24 @@ targets:
         CODE_SIGN_STYLE: Automatic
         SWIFT_EMIT_LOC_STRINGS: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      configs:
+        # Store-Signierung gehoert in die Quelle, nicht in die erzeugte
+        # pbxproj: dort ueberlebt sie kein xcodegen generate.
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: "Apple Distribution"
+          PROVISIONING_PROFILE_SPECIFIER: "GEO scanlite AppStore"
+          DEVELOPMENT_TEAM: R95M36AU2X
 
-  ScanLiteTests:
+  PaperlaneTests:
     type: bundle.unit-test
     platform: iOS
     sources:
-      - path: ScanLiteTests
-      - path: ScanLite/Resources/ScanLite.storekit
+      - path: PaperlaneTests
+      - path: Paperlane/Resources/Paperlane.storekit
         buildPhase: resources
     dependencies:
-      - target: ScanLite
+      - target: Paperlane
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.levinschwab.scanlite.tests

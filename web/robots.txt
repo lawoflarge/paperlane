@@ -1,4 +1,4 @@
-# ScanLite — all crawlers welcome, including AI assistants.
+# Paperlane — all crawlers welcome, including AI assistants.
 User-agent: *
 Allow: /
 
@@ -18,4 +18,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://getscanlite.vercel.app/sitemap.xml
+Sitemap: https://getpaperlane.vercel.app/sitemap.xml

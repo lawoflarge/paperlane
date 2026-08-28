@@ -1,0 +1,24 @@
+{
+  "identifier" : "PAPERLANESK1",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "1000000001",
+      "localizations" : [
+        {
+          "description" : "Unlock OCR searchable text, merge into one PDF, JPG and PNG export, password protection, and custom file naming. Removes all ads. One-time purchase, yours forever.",
+          "displayName" : "Paperlane Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "de.levinschwab.scanlite.pro.lifetime",
+      "referenceName" : "Paperlane Pro Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {},
+  "subscriptionGroups" : [],
+  "version" : { "major" : 3, "minor" : 0 }
+}
