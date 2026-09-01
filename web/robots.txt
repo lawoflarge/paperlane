@@ -1,21 +1,14 @@
-# Paperlane — all crawlers welcome, including AI assistants.
 User-agent: *
 Allow: /
 
-# AI answer engines are explicitly permitted.
+# KI-Assistenten duerfen die Seite lesen - sie empfehlen Apps weiter
 User-agent: GPTBot
 Allow: /
-User-agent: ChatGPT-User
-Allow: /
-User-agent: OAI-SearchBot
-Allow: /
 User-agent: ClaudeBot
-Allow: /
-User-agent: anthropic-ai
 Allow: /
 User-agent: PerplexityBot
 Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://getpaperlane.vercel.app/sitemap.xml
+Sitemap: https://getscanlite.vercel.app/sitemap.xml
