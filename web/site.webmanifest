@@ -1,7 +1,7 @@
 {
   "name": "Paperlane: Scan to PDF",
   "short_name": "Paperlane",
-  "description": "Paperlane is a free iPhone app that turns your phone into a document scanner and produces a clean, multi-page PDF in seconds. It automatically detects page edges and corrects persp",
+  "description": "Paperlane is a free iPhone app that turns your phone into a document scanner and produces a clean, multi-page PDF in seconds.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0B0B0F",
