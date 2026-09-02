@@ -1,30 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
-  
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Paperlane — Scan to PDF. Free. No subscription.</title>
-  <meta name="description" content="A free, no-login document scanner that exports clean, searchable PDFs forever. No subscription, no watermark. One-time Pro unlock for OCR, merge, encrypt and image export." />
-  <meta property="og:title" content="Paperlane — Scan to PDF, no subscription" />
-  <meta property="og:description" content="Clean, searchable PDFs forever. No subscription, no watermark. On-device, private." />
-  
+  <title>Scan Documents to PDF on iPhone | Paperlane</title>
+  <meta name="description" content="Free iPhone document scanner. Automatic edge detection, real multi page PDFs, and a searchable text layer on every scan. No watermark, no account, no subscription." />
+  <meta property="og:title" content="Paperlane: scan documents to PDF on iPhone" />
+  <meta property="og:description" content="A free iPhone scanner that writes real, searchable PDFs on the device. No watermark, no account, no subscription." />
+  <link rel="stylesheet" href="/aso-tokens.css" />
   <link rel="stylesheet" href="/styles.css" />
-  
-  
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      { "@type": "Question", "name": "Is there a free scan to PDF app for iPhone?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Paperlane is a free iPhone app that scans documents into real, multi-page PDFs with no watermark, no scan limit, and no account. It uses Apple's VisionKit for automatic edge detection and perspective correction. An optional one-time Paperlane Pro purchase adds extra tools, but scanning to PDF stays free forever." } },
-      { "@type": "Question", "name": "Does Paperlane work offline?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Paperlane runs entirely on your iPhone and needs no internet connection to scan documents, create PDFs, or browse your library. It has no servers and no account, so every file is processed and stored on-device. Because nothing is ever uploaded, Paperlane works the same in airplane mode as it does online." } },
-      { "@type": "Question", "name": "Does Paperlane add a watermark to scanned PDFs?", "acceptedAnswer": { "@type": "Answer", "text": "No. Paperlane never watermarks your PDFs, even on the free tier. Every scan exports as a clean, real, multi-page PDF that opens, prints, and shares anywhere. Many free scanner apps stamp a watermark or cap pages until you subscribe; Paperlane does neither, and there is no subscription at all." } },
-      { "@type": "Question", "name": "How much does Paperlane cost?", "acceptedAnswer": { "@type": "Answer", "text": "Paperlane is free to download and free to scan documents to PDF, with no subscription and no recurring charge. Paperlane Pro is a single one-time purchase of EUR 4.99 that unlocks searchable OCR, page merging, JPG and PNG export, and password protection. You pay once and keep Pro forever, including across reinstalls." } },
-      { "@type": "Question", "name": "Are my scanned documents private with Paperlane?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Paperlane is private by design: it has no servers, no account, and no cloud sync, so your scans never leave your iPhone. Documents live in a local, on-device library that only you control. Because there is no upload of your scans, no one but you can open your documents." } },
-      { "@type": "Question", "name": "Can Paperlane create a searchable PDF with OCR?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Paperlane Pro adds an on-device OCR text layer that makes scanned PDFs searchable, so you can find any word inside a scan and select or copy its text. The OCR runs locally with Apple's Vision framework, so documents are never uploaded. OCR is part of the one-time Paperlane Pro unlock." } }
+      {
+        "@type": "Question",
+        "name": "Is there a free way to scan documents to PDF on iPhone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Paperlane scans to real, multi page PDFs for free, with no watermark, no page cap and no account. Edge detection and perspective correction come from Apple VisionKit, the same engine behind the system scanner. A one time Paperlane Pro purchase adds a toolkit on top, but scanning and PDF export stay free."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Paperlane put a watermark on my PDFs?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. No tier of Paperlane stamps anything onto a page. Every scan exports as a clean multi page PDF that opens, prints and shares anywhere. The free version is paid for by ads inside the app instead, so the file you send carries no advertising and no branding."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Paperlane show ads?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The free version does. There is a banner at the bottom of the library, and a full screen ad can appear when you close a document, never in your first session and never more often than once every three minutes. Google's consent form asks you before the first ad loads, and you can change that answer later under Ad privacy in the settings. The ads never see your documents. Paperlane Pro removes all advertising."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does Paperlane cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Downloading and scanning are free. Paperlane Pro is a single purchase of $4.99 in the United States, priced in local currency elsewhere. It is a non subscription, non consumable in app purchase, so it does not renew, and it restores on any iPhone signed in to the same Apple ID."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are my scans uploaded anywhere?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Paperlane has no servers, no account and no cloud sync. Capture, text recognition and PDF creation all run on the iPhone, and documents are stored in a local library. Because nothing is uploaded, the app works the same in airplane mode."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are the PDFs searchable?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, and that part is free. When a scan is saved, Apple's on device Vision framework reads the pages and writes an invisible text layer into the PDF, so search and text selection work in any PDF reader. Library search reads that text too, which means a word from inside a document finds the document."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I get the text out as a file?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, with Paperlane Pro. It can copy the recognized text, export it as a .txt file, or export it as a .docx that opens in Word and Pages. The recognition itself already happened on the device when you saved the scan."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does it work without an internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Scanning, recognition, PDF creation, search and export all run offline. An internet connection is only needed to load ads in the free version and to complete a purchase."
+        }
+      }
     ]
   }
   </script>
@@ -88,78 +141,151 @@
 <!-- aso:head:end -->
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <div class="wrap">
-    <header class="nav"><span class="brand">Paperlane</span></header>
+    <header class="nav">
+      <a class="brand" href="/">Paper<span class="mark">lane</span></a>
+      <a class="navlink" href="https://apps.apple.com/app/id6780053638?ct=nav&amp;mt=8" data-aso-cta="nav">Get it on the App Store</a>
+    </header>
+    <main id="main">
 
-    <section class="hero">
-      <h1>Scan to PDF.<br><span class="accent">No subscription.</span></h1>
-      <p class="sub">A free, no-login document scanner that turns any page into a clean, <strong>searchable</strong> PDF. The deskew + OCR magic Adobe charges $10/month for — yours for free, or unlock the full toolkit once.</p>
-      <div class="badges">
-        <span class="badge">No subscription</span>
-        <span class="badge">No watermark</span>
-        <span class="badge">No scan limit</span>
-        <span class="badge">100% on-device</span>
-        <span class="badge">No account</span>
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow">Free iPhone app &middot; iOS 17 or later</span>
+      <h1>Scan Documents to PDF<br>on <span class="accent">iPhone</span></h1>
+      <p class="lede">Paperlane turns a page of paper into a clean, multi page PDF with a searchable text layer, without an account and without a subscription.</p>
+      <div class="cta-row"><a class="aso-badge" href="https://apps.apple.com/app/id6780053638?ct=hero&amp;mt=8" data-aso-cta="hero"><picture><source media="(prefers-color-scheme: dark)" srcset="/app-store-badge-white.svg"><img src="/app-store-badge.svg" width="165" height="55" alt="Download Paperlane on the App Store"></picture></a><p class="meta">Free to download. Paperlane Pro is a one time $4.99 unlock.</p></div>
+      <p class="rating"><span class="stars">5.0</span> out of 5, from 1 rating on the App Store.</p>
+      <ul class="tags">
+        <li>No watermark</li><li>No page cap</li><li>No account</li>
+        <li>No subscription</li><li>Nothing uploaded</li>
+      </ul>
+    </div>
+    <div class="hero-shot">
+      <img src="/shots/01.webp" width="221" height="480" alt="The Paperlane library on iPhone, showing scanned invoices with a search field above them" loading="lazy" decoding="async">
+    </div>
+  </div>
+</section>
+<section id="what"><h2>What one scan actually produces</h2>
+<p>Hold the iPhone over a page. Apple VisionKit finds the edges and straightens the perspective, you pick a page mode, and the save writes a real multi page PDF. On the way in, the pages are read on the device, so the file you get back can be searched by the words printed on it.</p>
+<ul class="ledger"><li><span class="term">A real PDF</span><span class="detail">Multi page, correctly ordered, and readable in any PDF viewer. Not an image dressed up as a document, and never stamped with a watermark.</span></li><li><span class="term">A searchable text layer</span><span class="detail">Written on every scan, at no cost. The recognized words sit invisibly over the page image, so search and text selection work in Files, Preview, Mail and anywhere else.</span></li><li><span class="term">A name you did not type</span><span class="detail">The first line the app recognizes becomes the document name, with the date after it. A receipt usually names itself after the shop.</span></li><li><span class="term">A private file</span><span class="detail">It is written to a local library on the iPhone. No server receives it, because Paperlane does not have one.</span></li></ul>
+</section><section id="screens"><h2>The app, four screens in</h2>
+<p>Real screenshots from version 2.1.0, not mockups.</p>
+<div class="shots">
+  <figure class="shot"><img src="/shots/01.webp" width="221" height="480" alt="Paperlane library grid with scanned invoices, a search field, and a Scan button" loading="lazy" decoding="async"><figcaption>The library. Search reads the words inside the documents, not just the titles.</figcaption></figure>
+  <figure class="shot"><img src="/shots/02.webp" width="221" height="480" alt="A scanned invoice open in the Paperlane PDF viewer with share, rotate and page tools" loading="lazy" decoding="async"><figcaption>A finished PDF, with share, rotate, page tools and the Pro menu on top.</figcaption></figure>
+  <figure class="shot"><img src="/shots/03.webp" width="221" height="480" alt="The Paperlane sort menu, offering newest first, oldest first, name and largest first" loading="lazy" decoding="async"><figcaption>Sort by date, name or file size. Favourites stay pinned above the rest.</figcaption></figure>
+  <figure class="shot"><img src="/shots/04.webp" width="221" height="480" alt="The Paperlane review screen with page modes Original, Color, Gray, black and white, and Sharpen" loading="lazy" decoding="async"><figcaption>Review before saving. Five page modes and a manual crop.</figcaption></figure>
+</div>
+</section><section id="features"><h2>Five things it does well</h2>
+<ul class="ledger"><li><span class="term">One tap to the camera</span><span class="detail">The scan button is the largest thing on the home screen. VisionKit captures page after page in one session, so a ten page contract is one document, not ten files.</span></li><li><span class="term">Recognition that costs nothing</span><span class="detail">Text recognition runs with Apple's Vision framework on save, on every scan, on the free tier. Most scanner apps put this behind a trial.</span></li><li><span class="term">A library you can actually search</span><span class="detail">Type a supplier name, an invoice number or a word from the body text. Search looks through the recognized text of every document, and folders and favourites keep the rest in order.</span></li><li><span class="term">It works with the network off</span><span class="detail">There is no sign in, no sync and no upload step that can fail. Airplane mode changes nothing except that the ads stop loading.</span></li><li><span class="term">A one time toolkit on top</span><span class="detail">Paperlane Pro adds text export to .txt and Word, JPG and PNG export, PDF compression, markup and signing, password protection, combining documents, and it removes the ads. One purchase, kept forever.</span></li></ul>
+<div class="cta-row"><a class="aso-badge" href="https://apps.apple.com/app/id6780053638?ct=features&amp;mt=8" data-aso-cta="features"><picture><source media="(prefers-color-scheme: dark)" srcset="/app-store-badge-white.svg"><img src="/app-store-badge.svg" width="165" height="55" alt="Download Paperlane on the App Store" loading="lazy"></picture></a><p class="meta">Free to download. Paperlane Pro is a one time $4.99 unlock.</p></div>
+</section><section id="free-vs-pro"><h2>Exactly what is free and what is not</h2>
+<p>Nothing here is time limited and nothing expires. This is the whole line.</p>
+<div class="plans">
+  <div class="plan">
+    <div class="amount">Free</div>
+    <div class="kicker">Forever, with ads</div>
+    <ul>
+      <li>Unlimited scans, no page cap</li>
+      <li>Edge detection and perspective correction</li>
+      <li>Page modes: Original, Color, Gray, B&amp;W, Sharpen</li>
+      <li>Manual crop before saving</li>
+      <li>Searchable text layer on every scan</li>
+      <li>Automatic naming from the recognized text</li>
+      <li>Full text search across the library</li>
+      <li>Folders, favourites, rename, duplicate, sort</li>
+      <li>Reorder, delete and add pages</li>
+      <li>Rotate a whole document</li>
+      <li>ID mode: front and back on one page</li>
+      <li>Import a photo from the photo library</li>
+      <li>Face ID or passcode lock on the library</li>
+      <li>Share to any app, no watermark</li>
+    </ul>
+  </div>
+  <div class="plan">
+    <div class="amount">$4.99</div>
+    <div class="kicker">Paperlane Pro, one time</div>
+    <ul>
+      <li>Copy the recognized text</li>
+      <li>Export text as .txt</li>
+      <li>Export text as .docx for Word</li>
+      <li>Smart rename from the document content</li>
+      <li>Export a page as JPG or PNG</li>
+      <li>Compress a PDF, three levels</li>
+      <li>Markup and sign a page</li>
+      <li>Save a business card as a contact</li>
+      <li>Password protect a PDF</li>
+      <li>Combine documents into one PDF</li>
+      <li>Removes all advertising</li>
+    </ul>
+  </div>
+</div>
+<p class="note"><strong>About the ads.</strong> The free version is supported by advertising from Google AdMob: a banner under the library, and a full screen ad that can appear when you close a document, never in your first session and never more often than once every three minutes. Google's consent form asks you before the first ad loads, and Ad privacy in the settings lets you change that answer later. The ads never receive your documents, because recognition and PDF creation never leave the phone. Paperlane Pro removes advertising entirely.</p>
+</section><section id="uses"><h2>What people actually scan</h2>
+<ul class="guides"><li><a href="/scan-document-to-pdf-iphone">How to scan a document to PDF on iPhone</a><span class="why">The built in ways, the steps for each, and when a dedicated scanner earns its place.</span></li><li><a href="/free-pdf-scanner-app-iphone">A free PDF scanner app without a subscription</a><span class="why">The five ways a free scanner stops being free, and a sixty second test for any of them.</span></li><li><a href="/searchable-pdf-ocr-iphone">Searchable PDFs with on-device OCR</a><span class="why">What the invisible text layer is, how to check yours has one, and how to get the text out.</span></li><li><a href="/scan-receipts-iphone">Scan receipts and find them again</a><span class="why">A filing workflow for paper receipts, and an honest list of what this is not.</span></li><li><a href="/scan-id-card-to-pdf">Scan an ID card with both sides on one page</a><span class="why">The two capture flow that produces one page, and why it matters that it stays on the phone.</span></li><li><a href="/sign-pdf-iphone">How to sign a PDF on iPhone</a><span class="why">Apple Markup for free, scan and sign for paper, and what a drawn signature is not.</span></li><li><a href="/adobe-scan-alternative">An Adobe Scan alternative</a><span class="why">Where Adobe is the better tool, where an on-device scanner wins, and what you give up.</span></li><li><a href="/camscanner-alternative">A CamScanner alternative without a watermark</a><span class="why">Why free scanners watermark, and what a cloud scanner does that this one cannot.</span></li></ul>
+</section><section id="pricing"><h2>Pricing, in one paragraph</h2>
+<p>The app is free. Paperlane Pro is $4.99 in the United States, once, and the App Store shows the local equivalent everywhere else. It is a non consumable in app purchase, so it never renews, and it restores on every iPhone signed in to the same Apple ID. There is no trial to forget about and no plan to cancel.</p>
+<div class="cta-row"><a class="aso-badge" href="https://apps.apple.com/app/id6780053638?ct=pricing&amp;mt=8" data-aso-cta="pricing"><picture><source media="(prefers-color-scheme: dark)" srcset="/app-store-badge-white.svg"><img src="/app-store-badge.svg" width="165" height="55" alt="Download Paperlane on the App Store" loading="lazy"></picture></a><p class="meta">One purchase. No subscription, ever.</p></div>
+</section><section id="faq"><h2>Questions</h2><div class="faq"><details><summary>Is there a free way to scan documents to PDF on iPhone?</summary><p>Yes. Paperlane scans to real, multi page PDFs for free, with no watermark, no page cap and no account. Edge detection and perspective correction come from Apple VisionKit, the same engine behind the system scanner. A one time Paperlane Pro purchase adds a toolkit on top, but scanning and PDF export stay free.</p></details><details><summary>Does Paperlane put a watermark on my PDFs?</summary><p>No. No tier of Paperlane stamps anything onto a page. Every scan exports as a clean multi page PDF that opens, prints and shares anywhere. The free version is paid for by ads inside the app instead, so the file you send carries no advertising and no branding.</p></details><details><summary>Does Paperlane show ads?</summary><p>The free version does. There is a banner at the bottom of the library, and a full screen ad can appear when you close a document, never in your first session and never more often than once every three minutes. Google's consent form asks you before the first ad loads, and you can change that answer later under Ad privacy in the settings. The ads never see your documents. Paperlane Pro removes all advertising.</p></details><details><summary>How much does Paperlane cost?</summary><p>Downloading and scanning are free. Paperlane Pro is a single purchase of $4.99 in the United States, priced in local currency elsewhere. It is a non subscription, non consumable in app purchase, so it does not renew, and it restores on any iPhone signed in to the same Apple ID.</p></details><details><summary>Are my scans uploaded anywhere?</summary><p>No. Paperlane has no servers, no account and no cloud sync. Capture, text recognition and PDF creation all run on the iPhone, and documents are stored in a local library. Because nothing is uploaded, the app works the same in airplane mode.</p></details><details><summary>Are the PDFs searchable?</summary><p>Yes, and that part is free. When a scan is saved, Apple's on device Vision framework reads the pages and writes an invisible text layer into the PDF, so search and text selection work in any PDF reader. Library search reads that text too, which means a word from inside a document finds the document.</p></details><details><summary>Can I get the text out as a file?</summary><p>Yes, with Paperlane Pro. It can copy the recognized text, export it as a .txt file, or export it as a .docx that opens in Word and Pages. The recognition itself already happened on the device when you saved the scan.</p></details><details><summary>Does it work without an internet connection?</summary><p>Yes. Scanning, recognition, PDF creation, search and export all run offline. An internet connection is only needed to load ads in the free version and to complete a purchase.</p></details></div></section><section id="support"><h2>Support</h2>
+<p>Bug reports, refund help and feature ideas all go to the same inbox, and a person reads them.</p>
+<p><a href="mailto:levin.schwab@gmx.de">levin.schwab@gmx.de</a></p>
+<p class="meta">Replies usually come within two business days. Naming your iPhone model and iOS version makes that faster.</p>
+</section>
+<section id="get">
+  <h2>Get Paperlane</h2>
+  <p>Free on the App Store. Requires iOS 17.0 or later.</p>
+  <div class="cta-row"><a class="aso-badge" href="https://apps.apple.com/app/id6780053638?ct=bottom&amp;mt=8" data-aso-cta="bottom"><picture><source media="(prefers-color-scheme: dark)" srcset="/app-store-badge-white.svg"><img src="/app-store-badge.svg" width="165" height="55" alt="Download Paperlane on the App Store" loading="lazy"></picture></a><p class="meta">Free to download. Paperlane Pro is a one time $4.99 unlock.</p></div>
+</section>
+
+    </main>
+  </div>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <p class="ftitle">Paperlane</p>
+        <p>A document scanner for iPhone that keeps every scan on the device. Free to scan and export PDFs, with a one time unlock for the rest.</p>
       </div>
-      <a class="cta" href="https://apps.apple.com/us/app/paperlane-scan-to-pdf/id6780053638">Get Paperlane</a>
-      <p class="geo-def" data-geo-definition>Paperlane is a free, no-login iPhone app that scans paper documents into clean, multi-page PDFs using Apple's on-device VisionKit edge detection. Scanning and PDF export are free forever, with no watermark and no account; a one-time Pro unlock adds searchable OCR, page merging, and password protection.</p>
-    </section>
-
-    <div class="shot"><div class="frame">A deskewed “true document” with an invisible, searchable OCR text layer — the moment a crooked snapshot becomes a machine-legible PDF.</div></div>
-
-    <section id="features">
-      <h2>Everything the free apps gate — done right</h2>
-      <div class="grid">
-        <div class="feature"><h3><span class="dot">●</span> One-tap scan</h3><p>Automatic edge detection and perspective correction via Apple VisionKit. From launch to camera in a single tap.</p></div>
-        <div class="feature"><h3><span class="dot">●</span> Real multi-page PDFs</h3><p>Openable, printable, shareable PDFs with correct page order — never an image-only file, never a watermark.</p></div>
-        <div class="feature"><h3><span class="dot">●</span> Private by design</h3><p>Everything runs on your iPhone. No account, no upload, no cloud. Your documents never leave the device.</p></div>
-        <div class="feature"><h3><span class="dot">●</span> Searchable OCR</h3><p>An invisible text layer makes scans selectable and searchable — find any word inside a scan.</p></div>
-        <div class="feature"><h3><span class="dot">●</span> Combine &amp; export</h3><p>Merge scans into one PDF, export pages as JPG or PNG, and password-protect sensitive documents.</p></div>
-        <div class="feature"><h3><span class="dot">●</span> Local library</h3><p>Browse, rename and delete your scans. Local-first storage you own — even if you stop updating.</p></div>
+      <div>
+        <p class="ftitle">Guides</p>
+        <ul><li><a href="/scan-document-to-pdf-iphone">How to scan a document to PDF on iPhone</a></li><li><a href="/free-pdf-scanner-app-iphone">A free PDF scanner app without a subscription</a></li><li><a href="/searchable-pdf-ocr-iphone">Searchable PDFs with on-device OCR</a></li><li><a href="/scan-receipts-iphone">Scan receipts and find them again</a></li><li><a href="/scan-id-card-to-pdf">Scan an ID card with both sides on one page</a></li><li><a href="/sign-pdf-iphone">How to sign a PDF on iPhone</a></li><li><a href="/adobe-scan-alternative">An Adobe Scan alternative</a></li><li><a href="/camscanner-alternative">A CamScanner alternative without a watermark</a></li></ul>
       </div>
-    </section>
-
-    <section id="pricing" class="price">
-      <h2>Free forever. Pro once.</h2>
-      <div class="card">
-        <div class="amount">€4.99</div>
-        <div class="label">One-time purchase · no subscription</div>
+      <div>
+        <p class="ftitle">App</p>
         <ul>
-          <li>Searchable OCR text layer</li>
-          <li>Combine pages into one PDF</li>
-          <li>Export as JPG or PNG</li>
-          <li>Password-protect your PDFs</li>
-          <li>Remove all ads</li>
+          <li><a href="https://apps.apple.com/app/id6780053638?ct=footer&amp;mt=8" data-aso-cta="footer">Download on the App Store</a></li>
+          <li><a href="/#pricing">Pricing</a></li>
+          <li><a href="/#support">Support</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
         </ul>
       </div>
-    </section>
-
-    <section id="faq" class="faq">
-      <h2>Questions</h2>
-      <details><summary>Is there a free scan to PDF app for iPhone?</summary><p>Yes. Paperlane is a free iPhone app that scans documents into real, multi-page PDFs with no watermark, no scan limit, and no account. It uses Apple's VisionKit for automatic edge detection and perspective correction. An optional one-time Paperlane Pro purchase adds extra tools, but scanning to PDF stays free forever.</p></details>
-      <details><summary>Does Paperlane work offline?</summary><p>Yes. Paperlane runs entirely on your iPhone and needs no internet connection to scan documents, create PDFs, or browse your library. It has no servers and no account, so every file is processed and stored on-device. Because nothing is ever uploaded, Paperlane works the same in airplane mode as it does online.</p></details>
-      <details><summary>Does Paperlane add a watermark to scanned PDFs?</summary><p>No. Paperlane never watermarks your PDFs, even on the free tier. Every scan exports as a clean, real, multi-page PDF that opens, prints, and shares anywhere. Many free scanner apps stamp a watermark or cap pages until you subscribe; Paperlane does neither, and there is no subscription at all.</p></details>
-      <details><summary>Does Paperlane show ads?</summary><p>The free version shows ads, served by Google AdMob, and asks for your consent before the first one loads. You can decline, and you can change that choice later under Ad privacy in the settings. The one-time Paperlane Pro unlock removes all advertising. Ads never see your scans: scanning, OCR and PDF creation stay on your device.</p></details>
-      <details><summary>How much does Paperlane cost?</summary><p>Paperlane is free to download and free to scan documents to PDF, with no subscription and no recurring charge. Paperlane Pro is a single one-time purchase of EUR 4.99 that unlocks searchable OCR, page merging, JPG and PNG export, and password protection. You pay once and keep Pro forever, including across reinstalls.</p></details>
-      <details><summary>Are my scanned documents private with Paperlane?</summary><p>Yes. Paperlane is private by design: it has no servers, no account, and no cloud sync, so your scans never leave your iPhone. Documents live in a local, on-device library that only you control. Because there is no upload of your scans, no one but you can open your documents.</p></details>
-      <details><summary>Can Paperlane create a searchable PDF with OCR?</summary><p>Yes. Paperlane Pro adds an on-device OCR text layer that makes scanned PDFs searchable, so you can find any word inside a scan and select or copy its text. The OCR runs locally with Apple's Vision framework, so documents are never uploaded. OCR is part of the one-time Paperlane Pro unlock.</p></details>
-    </section>
-
-    <section id="support" class="support">
-      <h2>Support</h2>
-      <p class="intro">Questions, bug reports, refund help, or a feature idea? Email us directly — a real person reads every message.</p>
-      <div class="contact">
-        <p class="label">Contact support</p>
-        <p><a class="email" href="mailto:levin.schwab@gmx.de">levin.schwab@gmx.de</a></p>
-        <p class="note">We typically reply within 2 business days. Please include your iPhone model and iOS version so we can help faster.</p>
-      </div>
-    </section>
-
-    <footer>
-      <p>© 2026 Levin Schwab · Paperlane</p>
-      <p><a href="#support">Support</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a></p>
-      <p class="updated">Last updated: 2026-07-23</p>
-    </footer>
+    </div>
+    <div class="fine">
+      <p>Paperlane is rated 5.0 out of 5 from 1 rating on the App Store. Requires iOS 17.0 or later. Free to download, with ads in the free version and a one time Paperlane Pro purchase of $4.99.</p>
+      <p>&copy; 2026 Levin Schwab</p>
+    </div>
   </div>
+</footer>
+
+<!-- Funnel-Messung: Seitenaufruf -> App-Store-Klick.
+     Vercel Web Analytics ist cookielos; das Ereignis nennt nur den Platz des Knopfes. -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script>
+(function(){
+  window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href*="apps.apple.com"]');
+    if(!a)return;
+    va('event',{name:'appstore_click',data:{
+      placement:a.getAttribute('data-aso-cta')||'unmarked',
+      page:location.pathname
+    }});
+  },{capture:true,passive:true});
+})();
+</script>
 </body>
 </html>
