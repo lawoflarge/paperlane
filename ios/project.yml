@@ -8,6 +8,7 @@ options:
 
 settings:
   base:
+    CROSS_PROMOTION_BASE_URL: ""
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: R95M36AU2X
     MARKETING_VERSION: "2.1.0"
@@ -15,6 +16,9 @@ settings:
     TARGETED_DEVICE_FAMILY: "1,2"
 
 packages:
+  CrossPromotion:
+    url: https://github.com/lawoflarge/lawoflarge.app.git
+    revision: 02e0df23fb13e2b6f3326b137ed426107f458beb
   GoogleMobileAds:
     url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
     from: "13.0.0"
@@ -29,6 +33,10 @@ targets:
     sources:
       - path: Paperlane
     dependencies:
+      - package: CrossPromotion
+        product: CrossPromotionUI
+      - package: CrossPromotion
+        product: CrossPromotionCore
       - package: GoogleMobileAds
       - package: GoogleUserMessagingPlatform
     scheme:
@@ -38,6 +46,7 @@ targets:
     info:
       path: Paperlane/Info.plist
       properties:
+        CrossPromotionBaseURL: "$(CROSS_PROMOTION_BASE_URL)"
         CFBundleDisplayName: Paperlane
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
