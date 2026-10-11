@@ -11,8 +11,8 @@ settings:
     CROSS_PROMOTION_BASE_URL: "https://zovzimsewjkjmazckhua.supabase.co/functions/v1/cross-promotion"
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: R95M36AU2X
-    MARKETING_VERSION: "2.1.0"
-    CURRENT_PROJECT_VERSION: "1787942199"
+    MARKETING_VERSION: "2.1.1"
+    CURRENT_PROJECT_VERSION: "1787942200"
     TARGETED_DEVICE_FAMILY: "1,2"
 
 packages:
