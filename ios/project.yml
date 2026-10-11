@@ -18,7 +18,7 @@ settings:
 packages:
   CrossPromotion:
     url: https://github.com/lawoflarge/lawoflarge.app.git
-    revision: 02e0df23fb13e2b6f3326b137ed426107f458beb
+    revision: 168dd73615cde4a62f92b0064aee3048c628c5a4
   GoogleMobileAds:
     url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
     from: "13.0.0"
