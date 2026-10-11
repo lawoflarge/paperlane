@@ -1,4 +1,5 @@
 import SwiftUI
+import CrossPromotionUI
 
 /// Settings: privacy app-lock toggle, Pro status / restore, and the wedge footer.
 struct SettingsView: View {
@@ -7,9 +8,11 @@ struct SettingsView: View {
     @Environment(ConsentManager.self) private var consent
     @Environment(\.dismiss) private var dismiss
     @State private var lockOn = false
+    @State private var promotions = AppPromotions.makeStore()
 
     var body: some View {
         NavigationStack {
+            PromotionViewport { viewport in
             List {
                 Section("Privacy") {
                     Toggle(isOn: $lockOn) {
@@ -42,7 +45,10 @@ struct SettingsView: View {
                         Label("Terms of use", systemImage: "doc.text")
                     }
                 } footer: {
-                    Text("No account. No watermark. No subscription. 100% on-device.")
+                    Text("No account. No watermark. No subscription. Documents are processed on your device.")
+                }
+                if let promotions {
+                    AppPromotionSection(store: promotions, viewport: viewport)
                 }
             }
             .navigationTitle("Settings")
@@ -50,6 +56,8 @@ struct SettingsView: View {
             .tint(PaperTheme.accent)
             .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Done") { dismiss() } } }
             .onAppear { lockOn = appLock.isEnabled }
+            }
+            .promotionLifecycle(promotions)
         }
     }
 }
