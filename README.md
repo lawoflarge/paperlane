@@ -11,9 +11,8 @@ One-tap PDF document scanner for iOS. Free, no-login, no-watermark, no subscript
 ## Monorepo
 - `ios/`: Swift 6 / SwiftUI / iOS 17+ app (xcodegen, Swift Testing). Bundle `de.levinschwab.scanlite`.
 - `web/`: Vercel-hosted marketing + legal pages (`getpaperlane.vercel.app`).
-- `docs/`: build plan & specs.
 
-Stack: VisionKit (`VNDocumentCameraViewController`), Vision (`VNRecognizeTextRequest`), PDFKit, ImageIO, SwiftData, StoreKit 2, GoogleMobileAds v13. No backend, no login, 100% on-device.
+Stack: VisionKit (`VNDocumentCameraViewController`), Vision (`VNRecognizeTextRequest`), PDFKit, ImageIO, SwiftData, StoreKit 2, GoogleMobileAds v13. No login, and scans never leave the device. The only network feature besides ads is an optional list of recommended apps in Settings, served from a small Supabase edge function that keeps aggregate counts only.
 
 ## Build
 ```
