@@ -8,7 +8,7 @@ options:
 
 settings:
   base:
-    CROSS_PROMOTION_BASE_URL: ""
+    CROSS_PROMOTION_BASE_URL: "https://zovzimsewjkjmazckhua.supabase.co/functions/v1/cross-promotion"
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: R95M36AU2X
     MARKETING_VERSION: "2.1.0"
